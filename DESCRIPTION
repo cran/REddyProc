@@ -1,6 +1,6 @@
 Package: REddyProc
 Type: Package
-Version: 1.1.2
+Version: 1.1.3
 Title: Post Processing of (Half-)Hourly Eddy-Covariance Measurements
 Authors@R: c( person( "Department for Biogeochemical Integration at MPI-BGC, Jena, Germany", role=c("cph"), email="REddyProc-help@bgc-jena.mpg.de" )
               ,person( "Thomas", "Wutzler", role=c("aut","cre"), email="twutz@bgc-jena.mpg.de" )
@@ -37,7 +37,7 @@ RoxygenNote: 6.0.1
 VignetteBuilder: knitr
 LinkingTo: Rcpp
 Depends: R (>= 3.0.0), methods
-Imports: dplyr, purrr, mlegp, logitnorm, tibble
+Imports: dplyr, purrr, rlang, mlegp, logitnorm, tibble
 Suggests: ncdf4, RNetCDF, testthat, minpack.lm, segmented, knitr,
         rmarkdown
 Collate: 'DataFunctions.R' 'aEddy.R' 'EddyGapfilling.R'
@@ -49,7 +49,7 @@ Collate: 'DataFunctions.R' 'aEddy.R' 'EddyGapfilling.R'
         'PartitioningLasslop10.R' 'PartitioningLasslop10Nighttime.R'
         'RcppExports.R' 'imports.R' 'variableNames.R' 'zzzDebugCode.R'
 NeedsCompilation: yes
-Packaged: 2018-01-17 09:10:25 UTC; twutz
+Packaged: 2018-01-19 13:44:52 UTC; twutz
 Author: Department for Biogeochemical Integration at MPI-BGC, Jena, Germany
     [cph],
   Thomas Wutzler [aut, cre],
@@ -61,4 +61,4 @@ Author: Department for Biogeochemical Integration at MPI-BGC, Jena, Germany
   Ladislav Šigut [ctb]
 Maintainer: Thomas Wutzler <twutz@bgc-jena.mpg.de>
 Repository: CRAN
-Date/Publication: 2018-01-18 13:27:57 UTC
+Date/Publication: 2018-01-19 18:27:02 UTC
