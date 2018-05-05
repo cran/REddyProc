@@ -1,6 +1,6 @@
 Package: REddyProc
 Type: Package
-Version: 1.1.3
+Version: 1.1.4
 Title: Post Processing of (Half-)Hourly Eddy-Covariance Measurements
 Authors@R: c( person( "Department for Biogeochemical Integration at MPI-BGC, Jena, Germany", role=c("cph"), email="REddyProc-help@bgc-jena.mpg.de" )
               ,person( "Thomas", "Wutzler", role=c("aut","cre"), email="twutz@bgc-jena.mpg.de" )
@@ -29,7 +29,7 @@ Description: Standard and extensible Eddy-Covariance data post-processing includ
   based and day-time based approaches
   (Lasslop et al. (2010) <doi:10.1111/j.1365-2486.2009.02041.x>).
 URL: https://www.bgc-jena.mpg.de/bgi/index.php/Services/REddyProcWeb,
-        http://r-forge.r-project.org/projects/reddyproc/
+        https://github.com/bgctw/REddyProc
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
@@ -37,19 +37,19 @@ RoxygenNote: 6.0.1
 VignetteBuilder: knitr
 LinkingTo: Rcpp
 Depends: R (>= 3.0.0), methods
-Imports: dplyr, purrr, rlang, mlegp, logitnorm, tibble
-Suggests: ncdf4, RNetCDF, testthat, minpack.lm, segmented, knitr,
-        rmarkdown
-Collate: 'DataFunctions.R' 'aEddy.R' 'EddyGapfilling.R'
+Imports: dplyr, purrr, rlang, mlegp, tibble
+Suggests: testthat, minpack.lm, segmented, knitr, rmarkdown
+Collate: 'CheckVal.R' 'DataFunctions.R' 'aEddy.R' 'EddyGapfilling.R'
         'EddyPartitioning.R' 'EddyPlotting.R'
         'EddyUStarFilterChangePointDetection.R' 'EddyUStarFilterDP.R'
         'Example.R' 'FileHandling.R' 'FileHandlingFormats.R'
         'GeoFunctions.R' 'LRC_base.R' 'LRC_logisticSigmoid.R'
         'LRC_nonrectangular.R' 'LRC_rectangular.R'
         'PartitioningLasslop10.R' 'PartitioningLasslop10Nighttime.R'
-        'RcppExports.R' 'imports.R' 'variableNames.R' 'zzzDebugCode.R'
+        'RcppExports.R' 'imports.R' 'logitnorm.R' 'variableNames.R'
+        'zzzDebugCode.R'
 NeedsCompilation: yes
-Packaged: 2018-01-19 13:44:52 UTC; twutz
+Packaged: 2018-05-05 11:57:27 UTC; twutz
 Author: Department for Biogeochemical Integration at MPI-BGC, Jena, Germany
     [cph],
   Thomas Wutzler [aut, cre],
@@ -61,4 +61,4 @@ Author: Department for Biogeochemical Integration at MPI-BGC, Jena, Germany
   Ladislav Šigut [ctb]
 Maintainer: Thomas Wutzler <twutz@bgc-jena.mpg.de>
 Repository: CRAN
-Date/Publication: 2018-01-19 18:27:02 UTC
+Date/Publication: 2018-05-05 13:05:37 UTC
