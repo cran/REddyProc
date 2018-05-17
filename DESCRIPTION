@@ -1,6 +1,6 @@
 Package: REddyProc
 Type: Package
-Version: 1.1.4
+Version: 1.1.5
 Title: Post Processing of (Half-)Hourly Eddy-Covariance Measurements
 Authors@R: c( person( "Department for Biogeochemical Integration at MPI-BGC, Jena, Germany", role=c("cph"), email="REddyProc-help@bgc-jena.mpg.de" )
               ,person( "Thomas", "Wutzler", role=c("aut","cre"), email="twutz@bgc-jena.mpg.de" )
@@ -49,7 +49,7 @@ Collate: 'CheckVal.R' 'DataFunctions.R' 'aEddy.R' 'EddyGapfilling.R'
         'RcppExports.R' 'imports.R' 'logitnorm.R' 'variableNames.R'
         'zzzDebugCode.R'
 NeedsCompilation: yes
-Packaged: 2018-05-05 11:57:27 UTC; twutz
+Packaged: 2018-05-17 11:34:32 UTC; twutz
 Author: Department for Biogeochemical Integration at MPI-BGC, Jena, Germany
     [cph],
   Thomas Wutzler [aut, cre],
@@ -61,4 +61,4 @@ Author: Department for Biogeochemical Integration at MPI-BGC, Jena, Germany
   Ladislav Šigut [ctb]
 Maintainer: Thomas Wutzler <twutz@bgc-jena.mpg.de>
 Repository: CRAN
-Date/Publication: 2018-05-05 13:05:37 UTC
+Date/Publication: 2018-05-17 17:37:50 UTC
