@@ -1,14 +1,65 @@
+# REddyProc 1.2
+
+- move geofunctions functionality to packages solartime and bigleaf
+
+- implemented experimental modified daytime partitioning after Keenan et al. 2019
+    where nighttime ecosystem respiration is estimated based on nighttime
+    estiamte of respiration at reference temperature.
+
+# REddyProc 1.1.6
+
+## support consistent processing across u* threshold scenarios 
+
+- also subsequent gapfilling and partitioning
+- keep information about u* thresholds and scenarios in class
+- adapted vignettes and overview
+
+## simplify argument naming and defaults
+
+- Changed argument names to exclude the type specifier suffix
+  , e.g. 'FluxVar.s' to 'FluxVar'. 
+  Provding the old argument names still works, but gives a warning. However,
+  at some future version, the old argument names will be removed.
+- Changed default column suffix in sEddyProc_sMDSGapFillAfterUstar from 
+  'withUstar' to 'uStar' for consistency with 
+  'sEddyProc_sMDSGapFillAfterUStarDistr'
+
+## improve fingerprint plots
+
+- fingerprint plots align month axis at the 1st of month instead of center
+- fingerprint plots change Infinity to NA before plotting
+
+## deprecated method 'sEddyProc_sEstUstarThreshold'
+
+And replace by 'sEddyProc_sEstUstarThold' with a simpler return value of
+only the component 'uStarTh' of the former complex return value.
+Use cases relying on the other return value components can still get them
+from class variable 'sUSTAR_DETAILS'.
+
+Currently, the method gives only a warning, but will be removed 
+in future in version 2.x of REddyProc.
+
+## further changes
+
+- set default number of uStar bootstrap samples 
+  to 200 to be consistent with the paper.
+- prevent bug when calling 'sEddyProc_sEstUstarThresholdDistribution'
+  with a single element vector.
+- on failing 'sEddyProc_sMRFluxPartition' tell user how to relax 
+  temperature range constraint    
+
+
 # REddyProc 1.1.5
 
 Moving profiling code and associated dependencies out of the distributed code.
-
 
 # REddyProc 1.1.4
 
 Reworking dependencies
 
-- implementing logit and invlogit from logtinorm directly in REddyProc
-- moving NetCDF related functions and dependencies to separate package REddyProcNCDF
+- implementing logit and invlogit from logitnorm directly in REddyProc
+- moving NetCDF related functions and dependencies to separate package 
+  REddyProcNCDF
 
 # REddyProc 1.1.3
 
@@ -38,26 +89,32 @@ CRAN policy related adjustments, not affecting the usage:
 
 # REddyProc 1.0.0.9000 
 
-There have been major code restructurings for implementing alternative light response curves in the day-time flux partitioning. 
-A few non-backward compatible changes have been introduced, e.g. by shortening function names. Hence this version is meant to be tested before changing version number to 1.1.0. 
+There have been major code restructurings for implementing alternative light 
+response curves in the day-time flux partitioning. 
+A few non-backward compatible changes have been introduced, e.g. by shortening 
+function names. Hence this version is meant to be tested before changing version 
+number to 1.1.0. 
 
 Interface changes
 
-- renamed usGetAnnualSeasonUStarMappingFromDistributionResult to usGetAnnualSeasonUStarMap
-- renamed usGetSeasonalSeasonUStarMappingFromDistributionResult to usGetSeasonalSeasonUStarMap
+- renamed usGetAnnualSeasonUStarMappingFromDistributionResult to 
+  usGetAnnualSeasonUStarMap
+- renamed usGetSeasonalSeasonUStarMappingFromDistributionResult to 
+  usGetSeasonalSeasonUStarMap
 - removed position arguments from sMRFluxPartition
   consistently use sSetLocationInfo before
   
 Changes in Day-Time partitioning
 
-- adpted Lasslop prior information on LRC-fit parameters as default
-- more options to control daytim-fitting with partGLControl
+- adopted Lasslop prior information on LRC-fit parameters as default
+- more options to control daytime-fitting with partGLControl
 - quickly maximise compatibility with Lasslop-pvWave processing by function
   partGLControlLasslopCompatible
 
 # REddyProc 0.8.6.9000
 
-This is a development version put to github so that all contributers can test and contribute for preparing version 1.0.
+This is a development version put to github so that all contributers can test 
+and contribute for preparing version 1.0.
 
 Gapfilling
 - now marking half-hours for which uStar is missing as a gap
@@ -72,7 +129,10 @@ Daytime-Flux partitioning
 
 ### Migration to github
 
-The hosting of the development moved (maybe temporarily) from mercurial to github. Releases will still be put to r-forge, because of its good package-checking setup for several platforms, and the help for submission to CRAN, but versioning and development of the code will be done on github. 
+The hosting of the development moved (maybe temporarily) from mercurial to 
+github. Releases will still be put to r-forge, because of its good 
+package-checking setup for several platforms, and the help for submission to 
+CRAN, but versioning and development of the code will be done on github. 
 
 ### Documentation
 

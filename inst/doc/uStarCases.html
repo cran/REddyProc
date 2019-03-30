@@ -215,9 +215,11 @@ library(dplyr)
 #+++ define directory for outputs
 outDir &lt;- tempdir()  # CRAN policy dictates to write only to this dir in examples
 #outDir &lt;- &quot;out&quot;     # to write to subdirectory of current users dir
-#+++ Add time stamp in POSIX time format to example data
-EddyDataWithPosix.F &lt;- fConvertTimeToPosix(Example_DETha98, &#39;YDH&#39;,Year.s = &#39;Year&#39; 
-    ,Day.s = &#39;DoY&#39;,Hour.s = &#39;Hour&#39;)
+#+++ Add time stamp in POSIX time format to example data 
+# and filter long runs of equal NEE values
+EddyDataWithPosix &lt;- fConvertTimeToPosix(
+  filterLongRuns(Example_DETha98, &quot;NEE&quot;)
+  , &#39;YDH&#39;, Year = &#39;Year&#39;, Day = &#39;DoY&#39;, Hour = &#39;Hour&#39;)
 </code></pre>
 
 <h2>Not applying uStar filtering</h2>
@@ -226,10 +228,10 @@ EddyDataWithPosix.F &lt;- fConvertTimeToPosix(Example_DETha98, &#39;YDH&#39;,Yea
 using <code>sEddyProc_sMDSGapFill</code>. Corresponding result columns then have
 no uStar specific suffix. </p>
 
-<pre><code class="r">EddyProc.C &lt;- sEddyProc$new(&#39;DE-Tha&#39;, EddyDataWithPosix.F, 
-    c(&#39;NEE&#39;,&#39;Rg&#39;,&#39;Tair&#39;,&#39;VPD&#39;, &#39;Ustar&#39;))
-EddyProc.C$sMDSGapFill(&#39;NEE&#39;)
-grep(&quot;NEE.*_f$&quot;,names(EddyProc.C$sExportResults()), value = TRUE)
+<pre><code class="r">EProc &lt;- sEddyProc$new(
+  &#39;DE-Tha&#39;, EddyDataWithPosix, c(&#39;NEE&#39;,&#39;Rg&#39;,&#39;Tair&#39;,&#39;VPD&#39;, &#39;Ustar&#39;))
+EProc$sMDSGapFill(&#39;NEE&#39;)
+grep(&quot;NEE.*_f$&quot;,names(EProc$sExportResults()), value = TRUE)
 </code></pre>
 
 <pre><code>## [1] &quot;NEE_f&quot;
@@ -239,30 +241,30 @@ grep(&quot;NEE.*_f$&quot;,names(EddyProc.C$sExportResults()), value = TRUE)
 
 <p>The user can provide value for uStar-filtering before gapfilling, using
 <code>sEddyProc_sMDSGapFillAfterUstar</code>. Output columns for this uStar scenario use
-the suffix as specified by argument <code>UstarSuffix.s</code> which defaults to &ldquo;WithUstar&rdquo;. </p>
+the suffix as specified by argument <code>uStarSuffix</code> which defaults to &ldquo;uStar&rdquo;. </p>
 
-<p>The friction velocity, uStar, needs to be in column named &ldquo;uStar&rdquo; of the input 
+<p>The friction velocity, uStar, needs to be in column named &ldquo;Ustar&rdquo; of the input 
 dataset.</p>
 
-<pre><code class="r">EddyProc.C &lt;- sEddyProc$new(&#39;DE-Tha&#39;, EddyDataWithPosix.F, 
-    c(&#39;NEE&#39;,&#39;Rg&#39;,&#39;Tair&#39;,&#39;VPD&#39;, &#39;Ustar&#39;))
+<pre><code class="r">EProc &lt;- sEddyProc$new(
+  &#39;DE-Tha&#39;, EddyDataWithPosix, c(&#39;NEE&#39;,&#39;Rg&#39;,&#39;Tair&#39;,&#39;VPD&#39;, &#39;Ustar&#39;))
 uStar &lt;- 0.46
-EddyProc.C$sMDSGapFillAfterUstar(&#39;NEE&#39;, UstarThres.df = uStar)
-grep(&quot;NEE.*_f$&quot;,names(EddyProc.C$sExportResults()), value = TRUE)
+EProc$sMDSGapFillAfterUstar(&#39;NEE&#39;, uStarTh = uStar)
+grep(&quot;NEE.*_f$&quot;,names(EProc$sExportResults()), value = TRUE)
 </code></pre>
 
-<pre><code>## [1] &quot;NEE_WithUstar_f&quot;
+<pre><code>## [1] &quot;NEE_uStar_f&quot;
 </code></pre>
 
-<h2>Sinlge uStar threshold estimate</h2>
+<h2>Single uStar threshold estimate</h2>
 
 <p>The uStar threshold can be estimated from the uStar-NEE relationship 
-from the data without its uncertainty by bootstrap.</p>
+from the data without estimating its uncertainty by a bootstrap.</p>
 
-<pre><code class="r">EddyProc.C &lt;- sEddyProc$new(&#39;DE-Tha&#39;, EddyDataWithPosix.F, 
-    c(&#39;NEE&#39;,&#39;Rg&#39;,&#39;Tair&#39;,&#39;VPD&#39;, &#39;Ustar&#39;))
+<pre><code class="r">EProc &lt;- sEddyProc$new(
+  &#39;DE-Tha&#39;, EddyDataWithPosix, c(&#39;NEE&#39;,&#39;Rg&#39;,&#39;Tair&#39;,&#39;VPD&#39;, &#39;Ustar&#39;))
 # estimating the thresholds based on the data (without bootstrap)
-(uStarTh &lt;- EddyProc.C$sEstUstarThreshold()$uStarTh)
+(uStarTh &lt;- EProc$sEstUstarThold())
 </code></pre>
 
 <pre><code>##   aggregationMode seasonYear  season     uStar
@@ -276,18 +278,149 @@ from the data without its uncertainty by bootstrap.</p>
 </code></pre>
 
 <pre><code class="r"># may plot saturation of NEE with UStar for a specified season to pdf
-EddyProc.C$sPlotNEEVersusUStarForSeason(levels(uStarTh$season)[3], dir = outDir )
+EProc$sPlotNEEVersusUStarForSeason(levels(uStarTh$season)[3], dir = outDir )
 </code></pre>
 
 <p>Next, the annual estimate is used as the default in gap-filling.
-Output columns use the suffix as specified by argument <code>UstarSuffix.s</code> 
-which defaults to &ldquo;WithUstar&rdquo;.</p>
+Output columns use the suffix as specified by argument <code>uSstarSuffix</code> 
+which defaults to &ldquo;uStar&rdquo;.</p>
 
-<pre><code class="r">EddyProc.C$sMDSGapFillAfterUstar(&#39;NEE&#39;)
-grep(&quot;NEE.*_f$&quot;,names(EddyProc.C$sExportResults()), value = TRUE)
+<pre><code class="r">#usGetAnnualSeasonUStarMap(EProc$sUSTAR_DETAILS$uStarTh)
+EProc$sMDSGapFillAfterUstar(&#39;NEE&#39;)
 </code></pre>
 
-<pre><code>## [1] &quot;NEE_WithUstar_f&quot;
+<pre><code>## Warning in .self$sGetUstarScenarios(): uStar scenarios not set yet. Setting
+## to annual mapping.
+</code></pre>
+
+<pre><code class="r">grep(&quot;NEE.*_f$&quot;,names(EProc$sExportResults()), value = TRUE)
+</code></pre>
+
+<pre><code>## [1] &quot;NEE_uStar_f&quot;
+</code></pre>
+
+<h2>Scenarios across distribution of u* threshold estimate</h2>
+
+<p>Choosing a different u* threshold effects filtering and the subsequent processing
+steps of gap-filling, and flux-partitioning. In order to quantify the uncertainty
+due to not exactly knowing the u* threshold, these processing steps should be
+repeated for different threshold scenarios, and the spread across the results should
+be investigated.</p>
+
+<p>First, the quantiles of the threshold distribution are estimated by bootstrap.</p>
+
+<pre><code class="r">EProc &lt;- sEddyProc$new(
+  &#39;DE-Tha&#39;, EddyDataWithPosix, c(&#39;NEE&#39;,&#39;Rg&#39;,&#39;Tair&#39;,&#39;VPD&#39;, &#39;Ustar&#39;))
+</code></pre>
+
+<pre><code>## New sEddyProc class for site &#39;DE-Tha&#39;
+</code></pre>
+
+<pre><code class="r">EProc$sEstimateUstarScenarios(
+    nSample = 100L, probs = c(0.05, 0.5, 0.95))
+</code></pre>
+
+<pre><code>## Warning in .estimateUStarSeason(...): sEstUstarThreshold: too few finite
+## records within season (n = 696) for 7 temperature classes. Need at least n
+## = 700. Returning NA for this Season.
+</code></pre>
+
+<pre><code>## 
+</code></pre>
+
+<pre><code>## Estimated UStar distribution of:
+##      uStar        5%      50%       95%
+## 1 0.41625 0.3844773 0.446381 0.6231564 
+## by using  100 bootstrap samples and controls:
+##                        taClasses                    UstarClasses 
+##                               7                              20 
+##                           swThr            minRecordsWithinTemp 
+##                              10                             100 
+##          minRecordsWithinSeason            minRecordsWithinYear 
+##                             160                            3000 
+## isUsingOneBigSeasonOnFewRecords 
+##                               1
+</code></pre>
+
+<pre><code class="r"># inspect the thresholds to be used by default
+EProc$sGetUstarScenarios()
+</code></pre>
+
+<pre><code>##    season   uStar       U05      U50       U95
+## 1 1998001 0.41625 0.3844773 0.446381 0.6231564
+## 2 1998003 0.41625 0.3844773 0.446381 0.6231564
+## 3 1998006 0.41625 0.3844773 0.446381 0.6231564
+## 4 1998009 0.41625 0.3844773 0.446381 0.6231564
+## 5 1998012 0.41625 0.3844773 0.446381 0.6231564
+</code></pre>
+
+<p>By default the annually aggregated threshold estimates are used for each season
+within one year as in the original method publication.
+To see the estimates for different aggregation levels,
+use method <code>sEddyProc_sGetEstimatedUstarThresholdDistribution</code>:</p>
+
+<pre><code class="r">(uStarThAgg &lt;- EProc$sGetEstimatedUstarThresholdDistribution())
+</code></pre>
+
+<pre><code>##   aggregationMode seasonYear  season     uStar        5%       50%
+## 1          single         NA    &lt;NA&gt; 0.4162500 0.3844773 0.4463810
+## 2            year       1998    &lt;NA&gt; 0.4162500 0.3844773 0.4463810
+## 3          season       1998 1998001 0.4162500 0.3844773 0.4463810
+## 4          season       1998 1998003 0.4162500 0.3193472 0.4152778
+## 5          season       1998 1998006 0.3520000 0.2999375 0.3905000
+## 6          season       1998 1998009 0.3369231 0.3050357 0.3865833
+## 7          season       1998 1998012 0.1740000 0.2392438 0.4379482
+##         95%
+## 1 0.6231564
+## 2 0.6231564
+## 3 0.6231564
+## 4 0.5516731
+## 5 0.4467083
+## 6 0.5146920
+## 7 0.6231564
+</code></pre>
+
+<p>In conjunction with method <code>usGetSeasonalSeasonUStarMap</code> and 
+<code>sEddyProc_sSetUstarScenarios</code> this can be used
+to set seasonally different u* threshold. 
+However, this common case supported by method 
+<code>sEddyProc_useSeaonsalUStarThresholds</code>. </p>
+
+<pre><code class="r">#EProc$sSetUstarScenarios(
+#  usGetSeasonalSeasonUStarMap(uStarThAgg)[,-2])
+EProc$useSeaonsalUStarThresholds()
+# inspect the changed thresholds to be used
+EProc$sGetUstarScenarios()
+</code></pre>
+
+<pre><code>##    season     uStar       U05       U50       U95
+## 3 1998001 0.4162500 0.3844773 0.4463810 0.6231564
+## 4 1998003 0.4162500 0.3193472 0.4152778 0.5516731
+## 5 1998006 0.3520000 0.2999375 0.3905000 0.4467083
+## 6 1998009 0.3369231 0.3050357 0.3865833 0.5146920
+## 7 1998012 0.1740000 0.2392438 0.4379482 0.6231564
+</code></pre>
+
+<p>Several function whose name ends with &#39;UstarScens&#39;
+perform the subsequent processing steps for all uStar scenarios.
+They operate and create columns that differ between threshold scenarios by
+a suffix.</p>
+
+<pre><code class="r">EProc$sMDSGapFillUStarScens(&quot;NEE&quot;)
+grep(&quot;NEE_.*_f$&quot;,names(EProc$sExportResults()), value = TRUE)
+</code></pre>
+
+<pre><code>## [1] &quot;NEE_uStar_f&quot; &quot;NEE_U05_f&quot;   &quot;NEE_U50_f&quot;   &quot;NEE_U95_f&quot;
+</code></pre>
+
+<pre><code class="r">EProc$sSetLocationInfo(LatDeg = 51.0, LongDeg = 13.6, TimeZoneHour = 1)
+EProc$sMDSGapFill(&#39;Tair&#39;, FillAll = FALSE, minNWarnRunLength = NA)
+EProc$sMDSGapFill(&#39;VPD&#39;, FillAll = FALSE, minNWarnRunLength = NA)
+EProc$sMRFluxPartitionUStarScens()
+grep(&quot;GPP_.*_f$&quot;,names(EProc$sExportResults()), value = TRUE)
+</code></pre>
+
+<pre><code>## [1] &quot;GPP_uStar_f&quot; &quot;GPP_U05_f&quot;   &quot;GPP_U50_f&quot;   &quot;GPP_U95_f&quot;
 </code></pre>
 
 <h2>See also</h2>

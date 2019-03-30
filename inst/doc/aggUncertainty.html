@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+<title></title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+
+
+
+<div id="aggregating-uncertainty-to-daily-and-annual-values" class="section level1">
+<h1>Aggregating uncertainty to daily and annual values</h1>
+<div id="example-setup" class="section level2">
+<h2>Example setup</h2>
+<p>We start with half-hourly <span class="math inline">\(u_*\)</span>-filtered and gap-filled NEE_f values. For simplicity this example uses data provided with the package and omits <span class="math inline">\(u_*\)</span> threshold detection but rather applies a user-specified threshold.</p>
+<p>With option <code>FillAll = TRUE</code>, an uncertainty, specifically the standard deviation, of the flux is estimated for each record during gapfilling and stored in variable <code>NEE_uStar_fsd</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(REddyProc)
+<span class="kw">library</span>(dplyr)
+EddyDataWithPosix &lt;-<span class="st"> </span>Example_DETha98 <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filterLongRuns</span>(<span class="st">&quot;NEE&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">fConvertTimeToPosix</span>(<span class="st">'YDH'</span>,<span class="dt">Year =</span> <span class="st">'Year'</span>,<span class="dt">Day =</span> <span class="st">'DoY'</span>, <span class="dt">Hour =</span> <span class="st">'Hour'</span>)
+EProc &lt;-<span class="st"> </span>sEddyProc<span class="op">$</span><span class="kw">new</span>(
+  <span class="st">'DE-Tha'</span>, EddyDataWithPosix, <span class="kw">c</span>(<span class="st">'NEE'</span>,<span class="st">'Rg'</span>,<span class="st">'Tair'</span>,<span class="st">'VPD'</span>, <span class="st">'Ustar'</span>))
+EProc<span class="op">$</span><span class="kw">sMDSGapFillAfterUstar</span>(<span class="st">'NEE'</span>, <span class="dt">uStarTh =</span> <span class="fl">0.3</span>, <span class="dt">FillAll =</span> <span class="ot">TRUE</span>)
+results &lt;-<span class="st"> </span>EProc<span class="op">$</span><span class="kw">sExportResults</span>() 
+<span class="kw">summary</span>(results<span class="op">$</span>NEE_uStar_fsd)</code></pre></div>
+<pre><code>##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+##  0.03535  1.69960  2.32796  2.74246  3.44417 24.55782</code></pre>
+<p>We can inspect, how the uncertainty scales with the flux magnitude.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>( NEE_uStar_fsd <span class="op">~</span><span class="st"> </span>NEE_uStar_fall, <span class="kw">slice</span>(results, <span class="kw">sample.int</span>(<span class="kw">nrow</span>(results),<span class="dv">400</span>)))</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="wrong-aggregation-without-correlations" class="section level2">
+<h2>Wrong aggregation without correlations</h2>
+<p>With neglecting correlations among records, the uncertainty of the mean annual flux is computed by adding the variances. The mean is computed by <span class="math inline">\(m = \sum{x_i}/n\)</span>. And hence its standard deviation by <span class="math inline">\(sd(m) = \sqrt{Var(m)}= \sqrt{\sum{Var(x_i)}/n^2} = \sqrt{n \bar{\sigma^2}/n^2} = \bar{\sigma^2}/\sqrt{n}\)</span>. This results in an approximate reduction of the average standard deviation <span class="math inline">\(\bar{\sigma^2}\)</span> by <span class="math inline">\(\sqrt{n}\)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">results <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(NEE_uStar_fqc <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(
+  <span class="dt">nRec =</span> <span class="kw">sum</span>(<span class="kw">is.finite</span>(NEE_uStar_f))
+  , <span class="dt">varSum =</span> <span class="kw">sum</span>(NEE_uStar_fsd<span class="op">^</span><span class="dv">2</span>, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)
+  , <span class="dt">seMean =</span> <span class="kw">sqrt</span>(varSum) <span class="op">/</span><span class="st"> </span>nRec
+  , <span class="dt">seMeanApprox =</span> <span class="kw">mean</span>(NEE_uStar_fsd, <span class="dt">na.rma =</span> <span class="ot">TRUE</span>) <span class="op">/</span><span class="st"> </span><span class="kw">sqrt</span>(nRec)
+  ) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(nRec, seMean, seMeanApprox)</code></pre></div>
+<pre><code>##    nRec     seMean seMeanApprox
+## 1 10901 0.02988839   0.02650074</code></pre>
+<p>Due to the large number of records, the estimated uncertainty is very low.</p>
+</div>
+<div id="considering-correlations" class="section level2">
+<h2>Considering correlations</h2>
+<p>When observations are not independent of each other, the formulas now become <span class="math inline">\(Var(m) = s^2/n_{eff}\)</span> where <span class="math inline">\(s^2 = \frac{n_{eff}}{n(n_{eff}-1)} \sum_{i=1}^n \sigma_i^2\)</span>, and with the number of effective observations <span class="math inline">\(n_{eff}\)</span> decreasing with the autocorrelation among records (Bayley 1946, Zieba 2011).</p>
+<p>The average standard deviation <span class="math inline">\(\sqrt{\bar{\sigma^2_i}}\)</span> now approximately decreases only by about <span class="math inline">\(\sqrt{n_{eff}}\)</span>:</p>
+<p><span class="math display">\[
+Var(m) = \frac{s^2}{n_{eff}} 
+= \frac{\frac{n_{eff}}{n(n_{eff}-1)} \sum_{i=1}^n \sigma_i^2}{n_{eff}}
+= \frac{1}{n(n_{eff}-1)} \sum_{i=1}^n \sigma_i^2 \\
+= \frac{1}{n(n_{eff}-1)} n \bar{\sigma^2_i} = \frac{\bar{\sigma^2_i}}{(n_{eff}-1)} 
+\]</span></p>
+<p>First we need to quantify the error terms, i.e. model-data residuals. For all the records of good quality, we have an original measured value <code>NEE_uStar_orig</code> and modelled value from MDS gapfilling, <code>NEE_uStar_fall</code>. The residual of bad-quality data is set to missing.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">results &lt;-<span class="st"> </span>EProc<span class="op">$</span><span class="kw">sExportResults</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(
+    <span class="dt">resid =</span> <span class="kw">ifelse</span>(NEE_uStar_fqc <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, NEE_uStar_orig <span class="op">-</span><span class="st"> </span>NEE_uStar_fall, <span class="ot">NA</span> )
+  )</code></pre></div>
+<p>Now we can inspect the the autocorrelation of the errors.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">acf</span>(results<span class="op">$</span>resid, <span class="dt">na.action =</span> na.pass, <span class="dt">main =</span> <span class="st">&quot;&quot;</span>)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>The empiricical autocorrelation function shows strong positive autocorrelation in residuals up to a lag of 10 records.</p>
+<p>Computation of effective number of observations is provided by function <code>computeEffectiveNumObs</code> from package <code>lognorm</code> based on the empirical autocorrelation function for given model-data residuals.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(lognorm)</code></pre></div>
+<pre><code>## Warning: package 'lognorm' was built under R version 3.5.3</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">autoCorr &lt;-<span class="st"> </span><span class="kw">computeEffectiveAutoCorr</span>(results<span class="op">$</span>resid)
+nEff &lt;-<span class="st"> </span><span class="kw">computeEffectiveNumObs</span>(results<span class="op">$</span>resid, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)
+<span class="kw">c</span>( <span class="dt">nEff =</span> nEff, <span class="dt">nObs =</span> <span class="kw">sum</span>(<span class="kw">is.finite</span>(results<span class="op">$</span>resid)))</code></pre></div>
+<pre><code>##      nEff      nObs 
+##  3870.283 10901.000</code></pre>
+<p>We see that the effective number of observations is only about a third of the number of observations.</p>
+<p>Now we can use the formulas for the sum and the mean of correlated normally distributed variables to compute the uncertainty of the mean.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">results <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(NEE_uStar_fqc <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(
+  <span class="dt">nRec =</span> <span class="kw">sum</span>(<span class="kw">is.finite</span>(NEE_uStar_fsd))
+  , <span class="dt">varMean =</span> <span class="kw">sum</span>(NEE_uStar_fsd<span class="op">^</span><span class="dv">2</span>, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">/</span><span class="st"> </span>nRec <span class="op">/</span><span class="st"> </span>(<span class="op">!!</span>nEff <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)
+  , <span class="dt">seMean =</span> <span class="kw">sqrt</span>(varMean) 
+  <span class="co">#, seMean2 = sqrt(mean(NEE_uStar_fsd^2, na.rm = TRUE)) / sqrt(!!nEff - 1)</span>
+  , <span class="dt">seMeanApprox =</span> <span class="kw">mean</span>(NEE_uStar_fsd, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">/</span><span class="st"> </span><span class="kw">sqrt</span>(<span class="op">!!</span>nEff <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)
+  ) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(seMean, seMeanApprox)</code></pre></div>
+<pre><code>##       seMean seMeanApprox
+## 1 0.05016727   0.04448115</code></pre>
+</div>
+<div id="daily-aggregation" class="section level2">
+<h2>Daily aggregation</h2>
+<p>When aggregating daily respiration, the same principles hold.</p>
+<p>However, when computing the number of effective observations, we recommend using the empirical autocorrelation function estimated on longer time series of residuals (<code>autoCorr</code> computed above) in <code>computeEffectiveNumObs</code> instead of estimating them from the residuals of each day.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">results &lt;-<span class="st"> </span>results <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(
+  <span class="dt">DateTime =</span> EddyDataWithPosix<span class="op">$</span>DateTime
+  , <span class="dt">DoY =</span> <span class="kw">as.POSIXlt</span>(DateTime <span class="op">-</span><span class="st"> </span><span class="dv">15</span><span class="op">*</span><span class="dv">60</span>)<span class="op">$</span>yday <span class="co"># midnight belongs to the previous</span>
+)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aggDay &lt;-<span class="st"> </span>results <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(DoY) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">summarise</span>(
+    <span class="dt">DateTime =</span> <span class="kw">first</span>(DateTime)
+    , <span class="dt">nRec =</span> <span class="kw">sum</span>( NEE_uStar_fqc <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)
+    , <span class="dt">nEff =</span> <span class="kw">computeEffectiveNumObs</span>(
+       resid, <span class="dt">effAcf =</span> <span class="op">!!</span>autoCorr, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)
+    , <span class="dt">NEE =</span> <span class="kw">mean</span>(NEE_uStar_f, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)
+    , <span class="dt">sdNEE =</span> <span class="cf">if</span> (nEff <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) <span class="ot">NA_real_</span> <span class="cf">else</span> <span class="kw">sqrt</span>(
+      <span class="kw">mean</span>(NEE_uStar_fsd<span class="op">^</span><span class="dv">2</span>, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">/</span><span class="st"> </span>(nEff <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)) 
+    , <span class="dt">sdNEEuncorr =</span> <span class="cf">if</span> (nRec <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) <span class="ot">NA_real_</span> <span class="cf">else</span> <span class="kw">sqrt</span>(
+       <span class="kw">mean</span>(NEE_uStar_fsd<span class="op">^</span><span class="dv">2</span>, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">/</span><span class="st"> </span>(nRec <span class="op">-</span><span class="st"> </span><span class="dv">1</span>))
+  )
+aggDay</code></pre></div>
+<pre><code>## # A tibble: 365 x 7
+##      DoY DateTime             nRec  nEff      NEE  sdNEE sdNEEuncorr
+##    &lt;int&gt; &lt;dttm&gt;              &lt;int&gt; &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;       &lt;dbl&gt;
+##  1     0 1998-01-01 00:30:00    21  7.87  0.124    0.988       0.579
+##  2     1 1998-01-02 00:30:00     7  3.66  0.00610  1.57        1.05 
+##  3     2 1998-01-03 00:30:00     0  0     0.0484  NA          NA    
+##  4     3 1998-01-04 00:30:00     0  0     0.303   NA          NA    
+##  5     4 1998-01-05 00:30:00    28 10.9   0.195    0.851       0.515
+##  6     5 1998-01-06 00:30:00    48 18.0   0.926    0.615       0.370
+##  7     6 1998-01-07 00:30:00    48 18.0  -0.337    0.566       0.340
+##  8     7 1998-01-08 00:30:00    46 17.2  -0.139    0.541       0.325
+##  9     8 1998-01-09 00:30:00    45 16.8   0.614    0.482       0.289
+## 10     9 1998-01-10 00:30:00    36 13.5   0.242    0.646       0.386
+## # ... with 355 more rows</code></pre>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>The confidence bounds (+-1.96 stdDev) computed with accounting for correlations in this case are about twice the ones computed with neglecting correlations.</p>
+</div>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

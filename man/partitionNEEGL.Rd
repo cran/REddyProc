@@ -2,23 +2,33 @@
 \alias{partitionNEEGL}
 \title{partitionNEEGL}
 \description{Partitioning NEE fluxes into GP and Reco after daytime method.}
-\usage{partitionNEEGL(ds, NEEVar.s = paste0("NEE", 
-    SuffixDash.s, "_f"), TempVar.s = "Tair_f", 
-    VPDVar.s = "VPD_f", RadVar.s = "Rg_f", 
-    Suffix.s = "", ..., controlGLPart = partGLControl(), 
+\usage{partitionNEEGL(ds, NEEVar = if (!missing(NEEVar.s)) NEEVar.s else paste0("NEE", 
+    suffixDash, "_f"), TempVar = if (!missing(TempVar.s)) TempVar.s else "Tair_f", 
+    VPDVar = if (!missing(VPDVar.s)) VPDVar.s else "VPD_f", 
+    RadVar = if (!missing(RadVar.s)) RadVar.s else "Rg_f", 
+    suffix = if (!missing(Suffix.s)) Suffix.s else "", 
+    NEEVar.s, TempVar.s, VPDVar.s, RadVar.s, 
+    Suffix.s, ..., controlGLPart = partGLControl(), 
     isVerbose = TRUE, nRecInDay = 48L, lrcFitter = RectangularLRCFitter())}
 \arguments{
   \item{ds}{dataset with all the specified input columns
 and full days in equidistant times}
-  \item{NEEVar.s}{Variable of NEE}
-  \item{TempVar.s}{Filled air or soil temperature variable (degC)}
-  \item{VPDVar.s}{Filled Vapor Pressure Deficit - VPD - (hPa)}
-  \item{RadVar.s}{Filled radiation variable}
-  \item{Suffix.s}{string inserted into column names before
+  \item{NEEVar}{Variable of NEE}
+  \item{TempVar}{Filled air or soil temperature variable (degC)}
+  \item{VPDVar}{Filled Vapor Pressure Deficit - VPD - (hPa)}
+  \item{RadVar}{Filled radiation variable}
+  \item{suffix}{string inserted into column names before
+identifier for NEE column defaults
+(see \code{\link{sEddyProc_sMDSGapFillAfterUstar}}).}
+  \item{NEEVar.s}{deprecated}
+  \item{TempVar.s}{deprecated}
+  \item{VPDVar.s}{deprecated}
+  \item{RadVar.s}{deprecated}
+  \item{Suffix.s}{deprecated
 identifier for NEE column defaults
 (see \code{\link{sEddyProc_sMDSGapFillAfterUstar}}).}
   \item{\dots}{further arguments to
-\code{\link{partGLExtractStandardData}}, such as \code{PotRadVar.s}}
+\code{\link{partGLExtractStandardData}}, such as \code{PotRadVar}}
   \item{controlGLPart}{further default parameters,
 see \code{\link{partGLControl}}}
   \item{isVerbose}{set to FALSE to suppress output messages}
@@ -49,8 +59,6 @@ with predictions
 based on LRC-fits that neglected the VPD effect.}
 \value{\item{Reco_DT_<suffix>}{predicted ecosystem respiration: mumol CO2/m2/s}
 \item{GPP_DT_<suffix>}{predicted gross primary production mumol CO2/m2/s}
-\item{GPP2000}{predicted gross primary production
-mumol CO2 / m2 / s for VPD = 0 at Rg = 2000}
 \item{<LRC>}{Further light response curve (LRC) parameters and
 their standard deviation depend on the used LRC
 (e.g. for the non-rectangular LRCC

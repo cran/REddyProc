@@ -3,8 +3,9 @@
 \alias{REddyProc}
 \title{Post Processing of (Half-)Hourly Eddy-Covariance Measurements}
 \description{
-Standard and extensible Eddy-Covariance data post-processing includes
-  uStar-filtering, gap-filling, and flux-partitioning.
+  Standard and extensible Eddy-Covariance data post-processing including
+  uStar-filtering, gap-filling, and flux-partitioning
+  (Wutzler et al. (2018) <doi:10.5194/bg-15-5015-2018>).
 
   The Eddy-Covariance (EC)  micrometeorological technique quantifies continuous
   exchange fluxes of gases, energy, and momentum between an ecosystem and the atmosphere.
@@ -54,6 +55,27 @@ Functions \code{\link{sEddyProc_sEstUstarThreshold}} and
 }
 \item{ Flux partitioning based on Night-Time: \code{\link{sEddyProc_sMRFluxPartition}} }
 \item{ Flux partitioning based on Day-Time: \code{\link{sEddyProc_sGLFluxPartition}} }
+}%itemize
+
+Processing across different scenarios of u* threshold estimate is supported by
+\itemize{
+\item{ Estimating the turbulence criterion, Ustar threshold, for omitting data
+  from periods of low turbulence:
+\code{\link{sEddyProc_sEstimateUstarScenarios}} and associated
+\itemize{
+\item query the thresholds to be used \code{\link{sEddyProc_sGetUstarScenarios}}
+\item set the thresholds to be used \code{\link{sEddyProc_sSetUstarScenarios}}
+\item query the estimated thresholds all different aggregation levels
+\code{\link{sEddyProc_sGetEstimatedUstarThresholdDistribution}}
+}} %itemize and %item
+\item{ Gap-Filling:
+\code{\link{sEddyProc_sMDSGapFillUStarScens}} }
+\item{ Flux partitioning based on Night-Time (Reichstein 2005):
+\code{\link{sEddyProc_sMRFluxPartitionUStarScens}} }
+\item{ Flux partitioning based on Day-Time (Lasslop 2010):
+\code{\link{sEddyProc_sGLFluxPartitionUStarScens}} }
+\item{ Flux partitioning based on modified Day-Time (Keenan 2019):
+\code{\link{sEddyProc_sTKFluxPartitionUStarScens}} }
 }%itemize
 
 Before or after processing, the data can be plotted:

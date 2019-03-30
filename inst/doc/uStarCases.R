@@ -1,3 +1,10 @@
+## ---- include = FALSE----------------------------------------------------
+# do not execute on CRAN: 
+# https://stackoverflow.com/questions/28961431/computationally-heavy-r-vignettes
+is_check <- ("CheckExEnv" %in% search()) || any(c("_R_CHECK_TIMINGS_",
+             "_R_CHECK_LICENSE_") %in% names(Sys.getenv()))
+knitr::opts_chunk$set(eval = !is_check)
+
 ## ----setup, include = FALSE----------------------------------------------
 library(knitr)
 #rmarkdown::render("vignettes/uStarCases.Rmd")
@@ -20,7 +27,7 @@ knit_hooks$set(spar = function(before, options, envir) {
      }
 })
 
-## ---- include = FALSE, warning = FALSE-----------------------------------
+## ---- include = FALSE----------------------------------------------------
 #themeTw <- theme_bw(base_size = 10) + theme(axis.title = element_text(size = 9))
 
 ## ----init, message = FALSE, output = 'hide'------------------------------
@@ -30,32 +37,64 @@ library(dplyr)
 #+++ define directory for outputs
 outDir <- tempdir()  # CRAN policy dictates to write only to this dir in examples
 #outDir <- "out"     # to write to subdirectory of current users dir
-#+++ Add time stamp in POSIX time format to example data
-EddyDataWithPosix.F <- fConvertTimeToPosix(Example_DETha98, 'YDH',Year.s = 'Year' 
-    ,Day.s = 'DoY',Hour.s = 'Hour')
+#+++ Add time stamp in POSIX time format to example data 
+# and filter long runs of equal NEE values
+EddyDataWithPosix <- fConvertTimeToPosix(
+  filterLongRuns(Example_DETha98, "NEE")
+  , 'YDH', Year = 'Year', Day = 'DoY', Hour = 'Hour')
 
 ## ----noUStar, message = FALSE--------------------------------------------
-EddyProc.C <- sEddyProc$new('DE-Tha', EddyDataWithPosix.F, 
-	c('NEE','Rg','Tair','VPD', 'Ustar'))
-EddyProc.C$sMDSGapFill('NEE')
-grep("NEE.*_f$",names(EddyProc.C$sExportResults()), value = TRUE)
+EProc <- sEddyProc$new(
+  'DE-Tha', EddyDataWithPosix, c('NEE','Rg','Tair','VPD', 'Ustar'))
+EProc$sMDSGapFill('NEE')
+grep("NEE.*_f$",names(EProc$sExportResults()), value = TRUE)
 
 ## ----userUStar, message = FALSE------------------------------------------
-EddyProc.C <- sEddyProc$new('DE-Tha', EddyDataWithPosix.F, 
-	c('NEE','Rg','Tair','VPD', 'Ustar'))
+EProc <- sEddyProc$new(
+  'DE-Tha', EddyDataWithPosix, c('NEE','Rg','Tair','VPD', 'Ustar'))
 uStar <- 0.46
-EddyProc.C$sMDSGapFillAfterUstar('NEE', UstarThres.df = uStar)
-grep("NEE.*_f$",names(EddyProc.C$sExportResults()), value = TRUE)
+EProc$sMDSGapFillAfterUstar('NEE', uStarTh = uStar)
+grep("NEE.*_f$",names(EProc$sExportResults()), value = TRUE)
 
 ## ----singleUStar, message = FALSE----------------------------------------
-EddyProc.C <- sEddyProc$new('DE-Tha', EddyDataWithPosix.F, 
-	c('NEE','Rg','Tair','VPD', 'Ustar'))
+EProc <- sEddyProc$new(
+  'DE-Tha', EddyDataWithPosix, c('NEE','Rg','Tair','VPD', 'Ustar'))
 # estimating the thresholds based on the data (without bootstrap)
-(uStarTh <- EddyProc.C$sEstUstarThreshold()$uStarTh)
+(uStarTh <- EProc$sEstUstarThold())
 # may plot saturation of NEE with UStar for a specified season to pdf
-EddyProc.C$sPlotNEEVersusUStarForSeason(levels(uStarTh$season)[3], dir = outDir )
+EProc$sPlotNEEVersusUStarForSeason(levels(uStarTh$season)[3], dir = outDir )
 
 ## ----singleUStarGapfill, message = FALSE---------------------------------
-EddyProc.C$sMDSGapFillAfterUstar('NEE')
-grep("NEE.*_f$",names(EddyProc.C$sExportResults()), value = TRUE)
+#usGetAnnualSeasonUStarMap(EProc$sUSTAR_DETAILS$uStarTh)
+EProc$sMDSGapFillAfterUstar('NEE')
+grep("NEE.*_f$",names(EProc$sExportResults()), value = TRUE)
+
+## ----uStarScen, results='hold'-------------------------------------------
+EProc <- sEddyProc$new(
+  'DE-Tha', EddyDataWithPosix, c('NEE','Rg','Tair','VPD', 'Ustar'))
+EProc$sEstimateUstarScenarios(
+    nSample = 100L, probs = c(0.05, 0.5, 0.95))
+# inspect the thresholds to be used by default
+EProc$sGetUstarScenarios()
+
+## ------------------------------------------------------------------------
+(uStarThAgg <- EProc$sGetEstimatedUstarThresholdDistribution())
+
+## ----uStarScenSetSeasonal------------------------------------------------
+#EProc$sSetUstarScenarios(
+#  usGetSeasonalSeasonUStarMap(uStarThAgg)[,-2])
+EProc$useSeaonsalUStarThresholds()
+# inspect the changed thresholds to be used
+EProc$sGetUstarScenarios()
+
+## ----uStarScenGapfill, message=FALSE-------------------------------------
+EProc$sMDSGapFillUStarScens("NEE")
+grep("NEE_.*_f$",names(EProc$sExportResults()), value = TRUE)
+
+## ----uStarScenMRPart, message=FALSE--------------------------------------
+EProc$sSetLocationInfo(LatDeg = 51.0, LongDeg = 13.6, TimeZoneHour = 1)
+EProc$sMDSGapFill('Tair', FillAll = FALSE, minNWarnRunLength = NA)
+EProc$sMDSGapFill('VPD', FillAll = FALSE, minNWarnRunLength = NA)
+EProc$sMRFluxPartitionUStarScens()
+grep("GPP_.*_f$",names(EProc$sExportResults()), value = TRUE)
 

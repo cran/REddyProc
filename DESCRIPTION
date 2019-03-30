@@ -1,6 +1,6 @@
 Package: REddyProc
 Type: Package
-Version: 1.1.5
+Version: 1.2
 Title: Post Processing of (Half-)Hourly Eddy-Covariance Measurements
 Authors@R: c( person( "Department for Biogeochemical Integration at MPI-BGC, Jena, Germany", role=c("cph"), email="REddyProc-help@bgc-jena.mpg.de" )
               ,person( "Thomas", "Wutzler", role=c("aut","cre"), email="twutz@bgc-jena.mpg.de" )
@@ -11,7 +11,9 @@ Authors@R: c( person( "Department for Biogeochemical Integration at MPI-BGC, Jen
               ,person( "Kerstin", "Sickel", role=c("ctb","trl"), email="ksickel@bgc-jena.mpg.de" )
               ,person( "Ladislav", "Šigut", role=c("ctb"), email="sigut.l@czechglobe.cz" )
               )
-Description: Standard and extensible Eddy-Covariance data post-processing includes  
+Description: Standard and extensible Eddy-Covariance data post-processing 
+  (Wutzler et al. (2018) <doi:10.5194/bg-15-5015-2018>)
+  includes  
   uStar-filtering, gap-filling, and flux-partitioning.
   The Eddy-Covariance (EC)  micrometeorological technique quantifies continuous 
   exchange fluxes of gases, energy, and momentum between an ecosystem and the atmosphere.
@@ -33,12 +35,13 @@ URL: https://www.bgc-jena.mpg.de/bgi/index.php/Services/REddyProcWeb,
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 VignetteBuilder: knitr
 LinkingTo: Rcpp
 Depends: R (>= 3.0.0), methods
-Imports: dplyr, purrr, rlang, mlegp, tibble
-Suggests: testthat, minpack.lm, segmented, knitr, rmarkdown
+Imports: dplyr, purrr, rlang, mlegp, tibble, magrittr, solartime
+Suggests: testthat, minpack.lm, segmented, knitr, rmarkdown, lognorm,
+        ggplot2, tidyr, bigleaf (>= 0.7)
 Collate: 'CheckVal.R' 'DataFunctions.R' 'aEddy.R' 'EddyGapfilling.R'
         'EddyPartitioning.R' 'EddyPlotting.R'
         'EddyUStarFilterChangePointDetection.R' 'EddyUStarFilterDP.R'
@@ -49,7 +52,7 @@ Collate: 'CheckVal.R' 'DataFunctions.R' 'aEddy.R' 'EddyGapfilling.R'
         'RcppExports.R' 'imports.R' 'logitnorm.R' 'variableNames.R'
         'zzzDebugCode.R'
 NeedsCompilation: yes
-Packaged: 2018-05-17 11:34:32 UTC; twutz
+Packaged: 2019-03-30 15:07:22 UTC; twutz
 Author: Department for Biogeochemical Integration at MPI-BGC, Jena, Germany
     [cph],
   Thomas Wutzler [aut, cre],
@@ -61,4 +64,4 @@ Author: Department for Biogeochemical Integration at MPI-BGC, Jena, Germany
   Ladislav Šigut [ctb]
 Maintainer: Thomas Wutzler <twutz@bgc-jena.mpg.de>
 Repository: CRAN
-Date/Publication: 2018-05-17 17:37:50 UTC
+Date/Publication: 2019-03-30 16:30:16 UTC

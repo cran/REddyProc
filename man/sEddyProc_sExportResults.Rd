@@ -1,10 +1,11 @@
 \name{sEddyProc_sExportResults}
 \alias{sEddyProc_sExportResults}
-\title{sEddyProc$sExportData - Export internal sTEMP data frame with result columns}
+\title{sEddyProc sExportResults}
 \description{Export class internal sTEMP data frame with result columns}
 \usage{sEddyProc_sExportResults(isListColumnsExported = FALSE)}
 \arguments{
-  \item{isListColumnsExported}{if TRUE export list columns in addition to numeric columns,
+  \item{isListColumnsExported}{if TRUE export list columns in addition
+to numeric columns,
 such as the covariance matrices of the the day-time-partitioning LRC fits}
 }
 
