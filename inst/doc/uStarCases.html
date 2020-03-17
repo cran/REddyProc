@@ -321,7 +321,7 @@ be investigated.</p>
 </code></pre>
 
 <pre><code>## Warning in .estimateUStarSeason(...): sEstUstarThreshold: too few finite
-## records within season (n = 696) for 7 temperature classes. Need at least n
+## records within season (n = 699) for 7 temperature classes. Need at least n
 ## = 700. Returning NA for this Season.
 </code></pre>
 
@@ -329,8 +329,8 @@ be investigated.</p>
 </code></pre>
 
 <pre><code>## Estimated UStar distribution of:
-##      uStar        5%      50%       95%
-## 1 0.41625 0.3844773 0.446381 0.6231564 
+##      uStar   5%       50%       95%
+## 1 0.41625 0.39 0.4588977 0.6374028 
 ## by using  100 bootstrap samples and controls:
 ##                        taClasses                    UstarClasses 
 ##                               7                              20 
@@ -346,12 +346,12 @@ be investigated.</p>
 EProc$sGetUstarScenarios()
 </code></pre>
 
-<pre><code>##    season   uStar       U05      U50       U95
-## 1 1998001 0.41625 0.3844773 0.446381 0.6231564
-## 2 1998003 0.41625 0.3844773 0.446381 0.6231564
-## 3 1998006 0.41625 0.3844773 0.446381 0.6231564
-## 4 1998009 0.41625 0.3844773 0.446381 0.6231564
-## 5 1998012 0.41625 0.3844773 0.446381 0.6231564
+<pre><code>##    season   uStar  U05       U50       U95
+## 1 1998001 0.41625 0.39 0.4588977 0.6374028
+## 2 1998003 0.41625 0.39 0.4588977 0.6374028
+## 3 1998006 0.41625 0.39 0.4588977 0.6374028
+## 4 1998009 0.41625 0.39 0.4588977 0.6374028
+## 5 1998012 0.41625 0.39 0.4588977 0.6374028
 </code></pre>
 
 <p>By default the annually aggregated threshold estimates are used for each season
@@ -363,21 +363,21 @@ use method <code>sEddyProc_sGetEstimatedUstarThresholdDistribution</code>:</p>
 </code></pre>
 
 <pre><code>##   aggregationMode seasonYear  season     uStar        5%       50%
-## 1          single         NA    &lt;NA&gt; 0.4162500 0.3844773 0.4463810
-## 2            year       1998    &lt;NA&gt; 0.4162500 0.3844773 0.4463810
-## 3          season       1998 1998001 0.4162500 0.3844773 0.4463810
-## 4          season       1998 1998003 0.4162500 0.3193472 0.4152778
-## 5          season       1998 1998006 0.3520000 0.2999375 0.3905000
-## 6          season       1998 1998009 0.3369231 0.3050357 0.3865833
-## 7          season       1998 1998012 0.1740000 0.2392438 0.4379482
+## 1          single         NA    &lt;NA&gt; 0.4162500 0.3900000 0.4588977
+## 2            year       1998    &lt;NA&gt; 0.4162500 0.3900000 0.4588977
+## 3          season       1998 1998001 0.4162500 0.3900000 0.4588977
+## 4          season       1998 1998003 0.4162500 0.3253793 0.3968182
+## 5          season       1998 1998006 0.3520000 0.3180227 0.3900000
+## 6          season       1998 1998009 0.3369231 0.2733118 0.3932158
+## 7          season       1998 1998012 0.1740000 0.2395810 0.4313831
 ##         95%
-## 1 0.6231564
-## 2 0.6231564
-## 3 0.6231564
-## 4 0.5516731
-## 5 0.4467083
-## 6 0.5146920
-## 7 0.6231564
+## 1 0.6374028
+## 2 0.6374028
+## 3 0.6374028
+## 4 0.5049168
+## 5 0.4508544
+## 6 0.5171098
+## 7 0.6327361
 </code></pre>
 
 <p>In conjunction with method <code>usGetSeasonalSeasonUStarMap</code> and 
@@ -394,11 +394,11 @@ EProc$sGetUstarScenarios()
 </code></pre>
 
 <pre><code>##    season     uStar       U05       U50       U95
-## 3 1998001 0.4162500 0.3844773 0.4463810 0.6231564
-## 4 1998003 0.4162500 0.3193472 0.4152778 0.5516731
-## 5 1998006 0.3520000 0.2999375 0.3905000 0.4467083
-## 6 1998009 0.3369231 0.3050357 0.3865833 0.5146920
-## 7 1998012 0.1740000 0.2392438 0.4379482 0.6231564
+## 3 1998001 0.4162500 0.3900000 0.4588977 0.6374028
+## 4 1998003 0.4162500 0.3253793 0.3968182 0.5049168
+## 5 1998006 0.3520000 0.3180227 0.3900000 0.4508544
+## 6 1998009 0.3369231 0.2733118 0.3932158 0.5171098
+## 7 1998012 0.1740000 0.2395810 0.4313831 0.6327361
 </code></pre>
 
 <p>Several function whose name ends with &#39;UstarScens&#39;
