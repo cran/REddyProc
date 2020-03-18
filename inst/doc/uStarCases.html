@@ -285,7 +285,7 @@ EProc$sPlotNEEVersusUStarForSeason(levels(uStarTh$season)[3], dir = outDir )
 Output columns use the suffix as specified by argument <code>uSstarSuffix</code> 
 which defaults to &ldquo;uStar&rdquo;.</p>
 
-<pre><code class="r">#usGetAnnualSeasonUStarMap(EProc$sUSTAR_DETAILS$uStarTh)
+<pre><code class="r">#EProc$useAnnualUStarThresholds()
 EProc$sMDSGapFillAfterUstar(&#39;NEE&#39;)
 </code></pre>
 
@@ -415,13 +415,25 @@ grep(&quot;NEE_.*_f$&quot;,names(EProc$sExportResults()), value = TRUE)
 
 <pre><code class="r">EProc$sSetLocationInfo(LatDeg = 51.0, LongDeg = 13.6, TimeZoneHour = 1)
 EProc$sMDSGapFill(&#39;Tair&#39;, FillAll = FALSE, minNWarnRunLength = NA)
+EProc$sMDSGapFill(&#39;Rg&#39;, FillAll = FALSE, minNWarnRunLength = NA)
 EProc$sMDSGapFill(&#39;VPD&#39;, FillAll = FALSE, minNWarnRunLength = NA)
 EProc$sMRFluxPartitionUStarScens()
 grep(&quot;GPP_.*_f$&quot;,names(EProc$sExportResults()), value = TRUE)
 </code></pre>
 
-<pre><code>## [1] &quot;GPP_uStar_f&quot; &quot;GPP_U05_f&quot;   &quot;GPP_U50_f&quot;   &quot;GPP_U95_f&quot;
+<pre><code>## [1] &quot;GPP_U95_f&quot;   &quot;GPP_U50_f&quot;   &quot;GPP_U05_f&quot;   &quot;GPP_uStar_f&quot;
 </code></pre>
+
+<pre><code class="r">if (FALSE) {
+  # run only interactively, because it takes long
+  EProc$sGLFluxPartitionUStarScens(uStarScenKeep = &quot;U50&quot;)
+  grep(&quot;GPP_DT_.*_f$&quot;,names(EProc$sExportResults()), value = TRUE)
+}
+</code></pre>
+
+<p>The argument <code>uStarScenKeep = &quot;U50&quot;</code> specifies that the outputs that
+are not distinguished by the suffix, e.g. <code>FP_GPP2000</code>, should be reported for the
+median u* threshold scenario with suffix <code>U50</code>, instead of the default first scenario.</p>
 
 <h2>See also</h2>
 

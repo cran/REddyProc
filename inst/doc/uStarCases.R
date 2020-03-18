@@ -7,7 +7,7 @@ knitr::opts_chunk$set(eval = !is_check)
 
 ## ----setup, include = FALSE----------------------------------------------
 library(knitr)
-#rmarkdown::render("vignettes/uStarCases.Rmd")
+#rmarkdown::render("vignettes/uStarCases.Rmd","md_document")
 opts_knit$set(root.dir = '..')
 opts_chunk$set(
     #, fig.align = "center"
@@ -65,7 +65,7 @@ EProc <- sEddyProc$new(
 EProc$sPlotNEEVersusUStarForSeason(levels(uStarTh$season)[3], dir = outDir )
 
 ## ----singleUStarGapfill, message = FALSE---------------------------------
-#usGetAnnualSeasonUStarMap(EProc$sUSTAR_DETAILS$uStarTh)
+#EProc$useAnnualUStarThresholds()
 EProc$sMDSGapFillAfterUstar('NEE')
 grep("NEE.*_f$",names(EProc$sExportResults()), value = TRUE)
 
@@ -94,7 +94,13 @@ grep("NEE_.*_f$",names(EProc$sExportResults()), value = TRUE)
 ## ----uStarScenMRPart, message=FALSE--------------------------------------
 EProc$sSetLocationInfo(LatDeg = 51.0, LongDeg = 13.6, TimeZoneHour = 1)
 EProc$sMDSGapFill('Tair', FillAll = FALSE, minNWarnRunLength = NA)
+EProc$sMDSGapFill('Rg', FillAll = FALSE, minNWarnRunLength = NA)
 EProc$sMDSGapFill('VPD', FillAll = FALSE, minNWarnRunLength = NA)
 EProc$sMRFluxPartitionUStarScens()
 grep("GPP_.*_f$",names(EProc$sExportResults()), value = TRUE)
+if (FALSE) {
+  # run only interactively, because it takes long
+  EProc$sGLFluxPartitionUStarScens(uStarScenKeep = "U50")
+  grep("GPP_DT_.*_f$",names(EProc$sExportResults()), value = TRUE)
+}
 

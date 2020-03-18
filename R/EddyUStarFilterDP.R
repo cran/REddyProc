@@ -289,7 +289,14 @@ usEstUstarThreshold = function(
 				resultsSeasonYearPooled <- data.frame(seasonYear = NA_character_
 				        , nRec = NA_integer_ , uStarPooled = NA_real_)[FALSE, ]
 			} else {
-				dscPooled <- dsc %>% filter(UQ(sym("seasonYear")) %in% !!seasonYearsPooled)
+				#dscPooled <- dsc %>% filter(UQ(sym("seasonYear")) %in% !!seasonYearsPooled)
+				dscPooled <- dsc %>% filter(.data$seasonYear %in% !!seasonYearsPooled)
+				if (!nrow(dscPooled)) {
+				  stop("Expected valid uStar records for year ", seasonYearsPooled,
+				       ", but got no records.\n",
+				       "Does the analyzed dataset include single records of",
+				       " adjacent years?")
+				}
 				UstarYearsTempL <- tmp <- dscPooled %>%
 				  split(.$seasonYear) %>%
 				  map(fEstimateUStarSeason
@@ -563,10 +570,10 @@ usControlUstarEst <- function(
     ## larger than this value, the temperature class is skipped.
   , isOmitNoThresholdBins = TRUE	##<< if TRUE, bins where no threshold was found
     ## are ignored. Set to FALSE to report highest uStar bin for these cases
-  , isUsingCPTSeveralT = FALSE		##<< set to TRUE to use changePointDetection
+  , isUsingCPTSeveralT = FALSE		##<< set to TRUE to use change point detection
     ## without binning uStar but with additionally changed aggregation scheme for
     ## several temperature classifications
-  , isUsingCPT = FALSE				##<< set to TRUE to use changePointDetection without
+  , isUsingCPT = FALSE				##<< set to TRUE to use change point detection without
     ## binning uStar before in usual aggregation method (good for comparing methods,
     ## but not recommended, overruled by isUsingCPTSeveralT = TRUE)
   , minValidUStarTempClassesProp = 0.2 ##<< seasons, in which only less than this
@@ -1233,7 +1240,7 @@ sEddyProc_sEstUstarThresholdDistribution <- function(
 		...  ##<< further parameters to
 		## \code{\link{sEddyProc_sEstimateUstarScenarios}}
 ) {
-  ##details<< This method returns the results directly, withhout modifying
+  ##details<< This method returns the results directly, without modifying
   ## the class. It is there for portability reasons. Recommended is
   ## using method \code{\link{sEddyProc_sEstimateUstarScenarios}} to
   ## update the class and then getting the results from the class by
@@ -1404,11 +1411,25 @@ sEddyProc_sApplyUStarScen <- function(
   ### apply a function with changing the suffix argument
   FUN  ##<< function to be applied
   , ...  ##<< further arguments to FUN
+  , uStarScenKeep = character(0) ##<< Scalar string specifying the scenario
+  ## for which to keep parameters. If not specified defaults to the first
+  ## entry in \code{uStarSuffixes}.
 ) {
+  ##details<<
+  ## When repeating computations, some of the
+  ## output variables maybe replaced. Argument \code{uStarKeep}
+  ## allows to select the scenario which is computed last,
+  ## and hence to which output columns refer to.
   uStarSuffixes = colnames(.self$sGetUstarScenarios())[-1]
-  resScen <- lapply(uStarSuffixes, function(suffix){
+  if (length(uStarScenKeep) != 1) uStarScenKeep = uStarSuffixes[1]
+  iKeep = match(uStarScenKeep, uStarSuffixes)
+  if (is.na(iKeep)) stop(
+    "Provided uStarScenKeep=",uStarScenKeep," was not among Scenarios: "
+    ,paste(uStarSuffixes,collapse = ","))
+  uStarSuffixesOrdered = c(uStarSuffixes[iKeep], uStarSuffixes[-iKeep])
+  resScen <- setNames(rev(lapply(rev(uStarSuffixesOrdered), function(suffix){
     FUN(..., suffix = suffix)
-  })
+  })), uStarSuffixesOrdered)
 }
 sEddyProc$methods(sApplyUStarScen =
                     sEddyProc_sApplyUStarScen)

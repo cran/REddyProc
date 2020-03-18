@@ -337,8 +337,9 @@ partGLControl <- function(
 		  ## repeating estimation
 			## with \code{isNeglectVPDEffect = TRUE} trying to predict when VPD
 			## is missing
-		, fixedTempSens = data.frame(E0 = NA_real_, sdE0 = NA_real_, RRef = NA_real_)	##<<
-		  ## data.frame of one row or nRow = nWindow
+		, fixedTempSens = data.frame(
+		  E0 = NA_real_, sdE0 = NA_real_, RRef = NA_real_)	##<< data.frame
+		  ## of one row or nRow = nWindow
 			## corresponding to return value of \code{partGLFitNightTimeTRespSens}
 			## While column \code{RRef} is used only as a  prior and initial value for
 			## the daytime-fitting and can be NA,
@@ -552,11 +553,11 @@ partGLExtractStandardData <- function(
 	                       , suffix, sep = "")
 	# Check if specified columns exist in sDATA or sTEMP and if numeric
 	# and plausible. Then apply quality flag
-	fCheckColNames(ds, c(NEEVar, QFNEEVar, TempVar, QFTempVar, RadVar
+	fCheckColNames(ds, c(NEEVar, QFNEEVar, TempVar, QFTempVar, RadVar, VPDVar
 	                 , QFRadVar, PotRadVar, NEESdVar), 'sGLFluxPartition')
-	fCheckColNum(ds, c(NEEVar, QFNEEVar, TempVar, QFTempVar, RadVar
+	fCheckColNum(ds, c(NEEVar, QFNEEVar, TempVar, QFTempVar, RadVar, VPDVar
 	                 , QFRadVar, PotRadVar, NEESdVar), 'sGLFluxPartition')
-	fCheckColPlausibility(ds, c(NEEVar, QFNEEVar, TempVar, QFTempVar
+	fCheckColPlausibility(ds, c(NEEVar, QFNEEVar, TempVar, QFTempVar, VPDVar
 	                 , RadVar, QFRadVar, PotRadVar), 'sGLFluxPartition')
 	NEEFiltered <- fSetQF(ds, NEEVar, QFNEEVar, QFNEEValue, 'sGLFluxPartition')
 	#
@@ -595,7 +596,7 @@ partGLExtractStandardData <- function(
 	dsR <- data.frame(
 			sDateTime = ds[[1]]			##<< first column of \code{ds},
 			  ## usually the time stamp
-			  ## not used, but usually first column is a dateTime is kept
+			  ## not used, but usually first column is a DateTime is kept
 			  ## for aiding debug
 			, NEE = NEEFiltered			      ##<< NEE filtered for quality flay
 			, sdNEE = ds[[NEESdVar]]		##<< standard deviation of NEE
@@ -739,7 +740,8 @@ partGLFitLRCOneWindow <- function(
 	# if no temperature-respiration relationship could be found,
 	# indicate no-fit, but report Window properties
 	E0 <- E0Win$E0[winInfo$iWindow]
-	sdE0 <- E0Win$sdE0[winInfo$iWindow]
+	# when provided fixed E0 the column sdEO does not exist
+	sdE0 <- if (length(E0Win$sdE0)) E0Win$sdE0[winInfo$iWindow] else NA
 	RRefNight <- E0Win$RRef[winInfo$iWindow]
 	getNAResult <- function(convergenceCode) {
 			list(
