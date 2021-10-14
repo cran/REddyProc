@@ -51,7 +51,7 @@ sEddyProc_sSetUStarSeasons <- function(
   ### factor for subsetting times with different uStar threshold (see details)
 ) {
   ##author<< TW
-  sTEMP$season <<- seasonFactor
+  sTEMP$season <<- as.factor(seasonFactor)
   ##value<< class with updated \code{seasonFactor}
   invisible(.self)
 }
@@ -123,6 +123,9 @@ usEstUstarThreshold = function(
 		    ## see \code{\link{usEstUstarThresholdSingleFw2Binned}}
 		, isCleaned = FALSE			##<< set to TRUE, if the data was cleaned already,
 		    ## to avoid expensive call to \code{usGetValidUstarIndices}.
+		, isInBootstrap = FALSE  ##<< set to TRUE if this is called from
+		    ## \code{\link{sEddyProc_sEstimateUstarScenarios}} to avoid further
+		    ## bootstraps in change-point detection
 ) {
 	##author<<
 	## TW, OM
@@ -233,7 +236,8 @@ usEstUstarThreshold = function(
 			##
 			## Note, that this method often gives higher estimates of the u * threshold.
 			## }}
-			.estimateUStarSeasonCPTSeveralT(...)
+			nBootSegmented <- if (isTRUE(isInBootstrap)) {0L} else 3L
+			.estimateUStarSeasonCPTSeveralT(..., nBootSegmented = nBootSegmented)
 		} else .estimateUStarSeason(...)
 	}
 	UstarSeasonsTempL <- dsc %>% split(.$season) %>% map(fEstimateUStarSeason
@@ -1067,10 +1071,11 @@ usGetYearOfSeason <- function(
 	##details<<
 	## searches a sorted integer vector for the next element
 	## that is >= a threshold in fast C-code
+	#wutz211013: breaks ci - stalls - no cue - revert to R
   ans <- whichValueGreaterEqualC(
 	  as.integer(x), as.integer(threshold), as.integer(iStart) )
   return(ans)
-  #if (iStart > length(x)) return(NA_integer_)
+  # if (iStart > length(x)) return(NA_integer_)
   #  return(iStart - 1 + which(x[iStart:length(x)] >= threshold)[1])
   ##value<<
 	## Scalar integer: first index in x, that is >= iStart,
@@ -1275,6 +1280,8 @@ sEddyProc_sEstimateUstarScenarios <- function(
   , probs = c(0.05, 0.5, 0.95)	##<< the quantiles of the bootstrap sample
   ## to return. Default is the 5%, median and 95% of the bootstrap
   , isVerbose = TRUE				##<< set to FALSE to omit printing progress
+  , suppressWarningsAfterFirst = TRUE ##<< set to FALSE to show also warnings
+  ## for all bootstrap estimates instead of only the first bootstrap sample
 ) {
   ##author<< TW
   ##details<<
@@ -1299,6 +1306,11 @@ sEddyProc_sEstimateUstarScenarios <- function(
   ds <- sDATA[, c("sDateTime", UstarColName, NEEColName, TempColName, RgColName)]
   colnames(ds) <- c("sDateTime", "Ustar", "NEE", "Tair", "Rg")
   ds$seasonFactor <- .self$sTEMP$season
+  # the segmented regression somehow seems to reset the random generator
+  # hence we need to initialize by different seeds to avoid repeating the same
+  # sample.
+  # Need to be done before the first call to .self$sEstUstarThold
+  bootSeeds <- sample.int(.Machine$integer.max, nSample - 1L)
   res0 <- suppressMessages(.self$sEstUstarThold(
     UstarColName = UstarColName
     , NEEColName = NEEColName
@@ -1312,8 +1324,9 @@ sEddyProc_sEstimateUstarScenarios <- function(
   iPosSeasons <- which(res0$aggregationMode == "season")
   years0 <- res0$seasonYear[iPosYears]
   seasons0 <- res0$season[iPosSeasons]
-  fWrapper <- function(iSample, ...) {
-    dsBootWithinSeason <- ds2 <- ds %>%
+  fWrapper <- function(seed, ...) {
+    set.seed(seed)
+    dsBootWithinSeason <- ds %>%
       split(.$seasonFactor) %>%
       map_df(function(dss) {
         iSample <- sample.int(nrow(dss), replace = TRUE)
@@ -1323,6 +1336,7 @@ sEddyProc_sEstimateUstarScenarios <- function(
     res <- usEstUstarThreshold(
       dsBootWithinSeason, ...
       , seasonFactor = dsBootWithinSeason$season
+      , isInBootstrap = TRUE
       , ctrlUstarEst = ctrlUstarEst, ctrlUstarSub = ctrlUstarSub	)
     gc()
     # need to check if years and seasons have been calculated
@@ -1346,9 +1360,15 @@ sEddyProc_sEstimateUstarScenarios <- function(
   }
   # collect into one big matrix
   Ustar.l0 <- res0$uStar[c(iPosAgg, iPosYears, iPosSeasons)]
-  Ustar.l <- suppressMessages(
-    Ustar.l <- lapply(1:(nSample - 1), fWrapper, ...)
-  )
+  if (isTRUE(suppressWarningsAfterFirst)) {
+    Ustar.l <- suppressWarnings(suppressMessages(
+      Ustar.l <- map(bootSeeds, fWrapper, ...)
+    ))
+  } else {
+    Ustar.l <- suppressMessages(
+      Ustar.l <- map(bootSeeds, fWrapper, ...)
+    )
+  }
   if (isTRUE(isVerbose) ) message("")	# line break
   stat <- do.call(rbind, c(list(Ustar.l0), Ustar.l))
   ##details<< \describe{\item{Quality Assurance}{
@@ -1414,6 +1434,9 @@ sEddyProc_sApplyUStarScen <- function(
   , uStarScenKeep = character(0) ##<< Scalar string specifying the scenario
   ## for which to keep parameters. If not specified defaults to the first
   ## entry in \code{uStarSuffixes}.
+  , warnOnOtherErrors = FALSE ##<< Set to only display a warning on errors in
+  ## uStarScenarios other than uStarScenKeep instead of stopping.
+  , uStarSuffixes = .self$sGetUstarSuffixes()
 ) {
   ##details<<
   ## When repeating computations, some of the
@@ -1426,10 +1449,21 @@ sEddyProc_sApplyUStarScen <- function(
   if (is.na(iKeep)) stop(
     "Provided uStarScenKeep=",uStarScenKeep," was not among Scenarios: "
     ,paste(uStarSuffixes,collapse = ","))
-  uStarSuffixesOrdered = c(uStarSuffixes[iKeep], uStarSuffixes[-iKeep])
-  resScen <- setNames(rev(lapply(rev(uStarSuffixesOrdered), function(suffix){
-    FUN(..., suffix = suffix)
-  })), uStarSuffixesOrdered)
+  uStarSuffixesOther <- uStarSuffixes[-iKeep]
+  resScenOther <- setNames(
+    if (isTRUE(warnOnOtherErrors)) {
+      warnErrList(lapply(uStarSuffixesOther, function(suffix){
+        try(FUN(..., suffix = suffix),silent = TRUE)}))
+    } else {
+      lapply(uStarSuffixesOther, function(suffix){
+        FUN(..., suffix = suffix)})
+    }
+    , uStarSuffixesOther)
+  # the one to keep must be called last, so that columns do not get overridden
+  resScenKeep <- setNames(list(
+    FUN(..., suffix = uStarSuffixes[iKeep])
+  ), uStarSuffixes[iKeep])
+  resScen <- c(resScenKeep, resScenOther)
 }
 sEddyProc$methods(sApplyUStarScen =
                     sEddyProc_sApplyUStarScen)

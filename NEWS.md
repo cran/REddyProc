@@ -1,3 +1,29 @@
+# REddyProc 1.3.0
+Accumulations of improvements warrant a new version and new CRAN release
+
+- workaround bug in changepoint detection (package segmented) that
+  reset random generator and caused resampling the same "random" bootstrap sample
+  repeatedly.
+- report the row and value of first non-numeric entry when checking for 
+  numeric columns
+- update vignette of aggregating uncertainty  
+- clarifying several points in function documentations
+- improving several error messages and warnings
+- allow for custom color palette in fingerprint plots
+- adapt C-code to work wit R4.x
+- bugfix in fLoadFluxnet15 with argument additional_columns
+
+# REddyProc 1.2.4
+
+- Provided VPD estimate of longer gaps by assuming daily minimum temperature at
+  dewpoint.
+- Daytime partitioning: now uses reduced LRC model if there is no 
+  large VPD in daily subset.
+
+# REddyProc 1.2.3
+
+- provide reading and exporting from Fluxnet 2015 formatted files and datasets.
+
 # REddyProc 1.2.2
 
 - improved error messages on uStar problems
@@ -13,6 +39,9 @@
 
 - fix bug in time conversion: explicitly check for leap-years instead of
   relying on strptime returning NA for implausible day-of-year. 
+- new function sEddyProc_sGetUstarSuffixes to get current uStar suffixes
+- refactoring: replace deprecated select_ method by select
+- avoid warning on replacing columns during scenarios of daytime partitioning
 
 # REddyProc 1.2
 

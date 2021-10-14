@@ -79,8 +79,13 @@ computations. This may help when VPD is rarely measured.}
 repeating estimation
 with \code{isNeglectVPDEffect = TRUE} trying to predict when VPD
 is missing}
-  \item{fixedTempSens}{
-}
+  \item{fixedTempSens}{data.frame
+of one row or nRow = nWindow
+corresponding to return value of \code{partGLFitNightTimeTRespSens}
+While column \code{RRef} is used only as a  prior and initial value for
+the daytime-fitting and can be NA,
+\code{E0} is used as given temperature sensitivity and varied according
+to \code{sdE0} in the bootstrap.}
   \item{replaceMissingSdNEEParms}{parameters for
 replacing missing standard deviation of NEE.
 see \code{replaceMissingSdByPercentage}.
@@ -107,7 +112,7 @@ Keenan 2019 (doi:10.1038/s41559-019-0809-2)}
 \value{list with entries of given arguments.}
 
 \author{TW
-Department for Biogeochemical Integration at MPI-BGC, Jena, Germany <REddyProc-help@bgc-jena.mpg.de> [cph], Thomas Wutzler <twutz@bgc-jena.mpg.de> [aut, cre], Markus Reichstein <mreichstein@bgc-jena.mpg.de> [aut], Antje Maria Moffat <antje.moffat@bgc.mpg.de> [aut, trl], Olaf Menzer <omenzer@bgc-jena.mpg.de> [ctb], Mirco Migliavacca <mmiglia@bgc-jena.mpg.de> [aut], Kerstin Sickel <ksickel@bgc-jena.mpg.de> [ctb, trl], Ladislav Šigut <sigut.l@czechglobe.cz> [ctb]}
+Department for Biogeochemical Integration at MPI-BGC, Jena, Germany <REddyProc-help@bgc-jena.mpg.de> [cph], Thomas Wutzler <twutz@bgc-jena.mpg.de> [aut, cre], Markus Reichstein <mreichstein@bgc-jena.mpg.de> [aut], Antje Maria Moffat <antje.moffat@bgc.mpg.de> [aut, trl], Olaf Menzer <omenzer@bgc-jena.mpg.de> [ctb], Mirco Migliavacca <mmiglia@bgc-jena.mpg.de> [aut], Kerstin Sickel <ksickel@bgc-jena.mpg.de> [ctb, trl], Ladislav <U+0160>igut <sigut.l@czechglobe.cz> [ctb]}
 
 
 

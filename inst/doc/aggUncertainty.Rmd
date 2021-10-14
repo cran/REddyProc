@@ -1,4 +1,5 @@
 ---
+title: Uncertainty aggregation
 output: 
   rmarkdown::html_vignette:
     keep_md: true
@@ -67,14 +68,51 @@ EProc <- sEddyProc$new(
   'DE-Tha', EddyDataWithPosix, c('NEE','Rg','Tair','VPD', 'Ustar'))
 EProc$sMDSGapFillAfterUstar('NEE', uStarTh = 0.3, FillAll = TRUE)
 results <- EProc$sExportResults() 
-summary(results$NEE_uStar_fsd)
+results_good <- results %>% filter(NEE_uStar_fqc <= 1) 
+summary(results_good$NEE_uStar_fsd)
 ```
 We can inspect, how the uncertainty scales with the flux magnitude.
 ```{r}
-plot( NEE_uStar_fsd ~ NEE_uStar_fall, slice(results, sample.int(nrow(results),400)))
+results_good %>% slice(sample.int(nrow(results_good),400)) %>% 
+plot( NEE_uStar_fsd ~ NEE_uStar_fall, data = . )
 ```
 
-## Wrong aggregation without correlations
+## Omitting problematic records
+REddyProc flags filled data with poor gap-filling by a quality flag 
+in `NEE_<uStar>_fqc` > 0 but 
+still reports the fluxes. For aggregation we recommend computing the mean
+including those gap-filled records, i.e. using `NEE_<uStar>_f` instead of 
+`NEE_orig`. However, for estimating the uncertainty of the
+aggregated value, the the gap-filled records should not contribute to the 
+reduction of uncertainty due to more replicates.
+
+Hence, first we create a column similar `NEE_orig_sd` to `NEE_<uStar>_fsd` 
+but where the estimated uncertainty is set to missing for the gap-filled records.
+```{r}
+results <- EProc$sExportResults() %>% 
+  mutate(
+    NEE_orig_sd = ifelse(
+      is.finite(.data$NEE_uStar_orig), .data$NEE_uStar_fsd, NA),
+    NEE_uStar_fgood = ifelse(
+      is.finite(.data$NEE_uStar_fqc <= 1), .data$NEE_uStar_f, NA)
+)
+```
+
+If the aggregated mean should be computed excluding poor quality-gap-filled
+data, then its best to use a column with values set to missing
+for poor quality, e.g. using `NEE_<uStar>_fgood` instead of `NEE_<uStar>_f`.
+However, the bias in aggregated results can be larger when omitting records, 
+e.g. consistently omitting more low night-time fluxes, 
+than with using poor estimates of those fluxes.
+
+## Random error
+For a given u* threshold, the aggregation across time uses many records. The
+random error in each record, i.e. `NEE_fsd`, is only partially correlated to the 
+random error to records close by. Hence, the relative uncertainty of the
+aggregated value decreases compared to the average relative uncertainty
+of the individual observations.
+
+### Wrong aggregation without correlations
 With neglecting correlations among records, the uncertainty of the mean annual
 flux is computed by adding the variances. 
 The mean is computed by $m = \sum{x_i}/n$. 
@@ -84,16 +122,17 @@ This results in an approximate reduction of the average standard deviation
 $\bar{\sigma^2}$ by $\sqrt{n}$.
 
 ```{r}
-results %>% filter(NEE_uStar_fqc == 0) %>% summarise(
-  nRec = sum(is.finite(NEE_uStar_f))
-  , varSum = sum(NEE_uStar_fsd^2, na.rm = TRUE)
+results %>% summarise(
+  nRec = sum(is.finite(NEE_orig_sd))
+  , NEEagg = mean(NEE_uStar_f)
+  , varSum = sum(NEE_orig_sd^2, na.rm = TRUE)
   , seMean = sqrt(varSum) / nRec
-  , seMeanApprox = mean(NEE_uStar_fsd, na.rma = TRUE) / sqrt(nRec)
-  ) %>% select(nRec, seMean, seMeanApprox)
+  , seMeanApprox = mean(NEE_orig_sd, na.rm = TRUE) / sqrt(nRec)
+  ) %>% select(NEEagg, nRec, seMean, seMeanApprox)
 ```
 Due to the large number of records, the estimated uncertainty is very low.
 
-## Considering correlations
+### Considering correlations
 
 When observations are not independent of each other, 
 the formulas now become $Var(m) = s^2/n_{eff}$ where
@@ -115,12 +154,17 @@ $$
 First we need to quantify the error terms, i.e. model-data residuals. 
 For all the records of good quality, we have an original
 measured value `NEE_uStar_orig` and modelled value from MDS gapfilling, 
-`NEE_uStar_fall`. The residual of bad-quality data is set to missing.
+`NEE_uStar_fall`. 
+
+For computing autocorrelation, equidistant time steps are important.
+Hence, instead of filtering, the residuals of bad-quality data are set to missing.
 
 ```{r}
 results <- EProc$sExportResults() %>% 
   mutate(
-    resid = ifelse(NEE_uStar_fqc == 0, NEE_uStar_orig - NEE_uStar_fall, NA )
+    resid = ifelse(NEE_uStar_fqc == 0, NEE_uStar_orig - NEE_uStar_fall, NA)
+    ,NEE_orig_sd = ifelse(
+      is.finite(.data$NEE_uStar_orig), .data$NEE_uStar_fsd, NA)
   )
 ```
 
@@ -134,13 +178,21 @@ in residuals up to a lag of 10 records.
 
 Computation of effective number of observations is provided by function 
 `computeEffectiveNumObs` from package `lognorm` based on the empirical 
-autocorrelation function for given model-data residuals.
+autocorrelation function for given model-data residuals. Note that this
+function needs to be applied to the series including all records, i.e. 
+not filtering quality flag before.
+
+```{r include=FALSE}
+if (!requireNamespace("lognorm")) {
+  cat("This vignette requires the lognorm package to be installed.")
+  knitr::knit_exit()
+}
+```
 
 ```{r}
-library(lognorm)
-autoCorr <- computeEffectiveAutoCorr(results$resid)
-nEff <- computeEffectiveNumObs(results$resid, na.rm = TRUE)
-c( nEff = nEff, nObs = sum(is.finite(results$resid)))
+autoCorr <- lognorm::computeEffectiveAutoCorr(results$resid)
+nEff <- lognorm::computeEffectiveNumObs(results$resid, na.rm = TRUE)
+c(nEff = nEff, nObs = sum(is.finite(results$resid)))
 ```
 
 We see that the effective number of observations is only about a third of the 
@@ -150,16 +202,23 @@ Now we can use the formulas for the sum and the mean of correlated normally
 distributed variables to compute the uncertainty of the mean.
 
 ```{r}
-results %>% filter(NEE_uStar_fqc == 0) %>% summarise(
-  nRec = sum(is.finite(NEE_uStar_fsd))
-  , varMean = sum(NEE_uStar_fsd^2, na.rm = TRUE) / nRec / (!!nEff - 1)
+resRand <- results %>% summarise(
+  nRec = sum(is.finite(NEE_orig_sd))
+  , NEEagg = mean(NEE_uStar_f, na.rm = TRUE)
+  , varMean = sum(NEE_orig_sd^2, na.rm = TRUE) / nRec / (!!nEff - 1)
   , seMean = sqrt(varMean) 
-  #, seMean2 = sqrt(mean(NEE_uStar_fsd^2, na.rm = TRUE)) / sqrt(!!nEff - 1)
-  , seMeanApprox = mean(NEE_uStar_fsd, na.rm = TRUE) / sqrt(!!nEff - 1)
-  ) %>% select(seMean, seMeanApprox)
+  #, seMean2 = sqrt(mean(NEE_orig_sd^2, na.rm = TRUE)) / sqrt(!!nEff - 1)
+  , seMeanApprox = mean(NEE_orig_sd, na.rm = TRUE) / sqrt(!!nEff - 1)
+  ) %>% select(NEEagg, seMean, seMeanApprox)
+resRand
 ```
+The aggregated value is the same, but its uncertainty increased compared
+to the computation neglecting correlations.
 
-## Daily aggregation
+Note, how we used `NEE_uStar_f` for computing the mean, 
+but `NEE_orig_sd` instead of `NEE_uStar_fsd` for computing the uncertainty.
+
+### Daily aggregation
 
 When aggregating daily respiration, the same principles hold.
 
@@ -169,32 +228,40 @@ estimated on longer time series of residuals (`autoCorr` computed above)
 in `computeEffectiveNumObs` instead of estimating them 
 from the residuals of each day.
 
+First, create a column DoY to subset records of each day.
 ```{r}
 results <- results %>% mutate(
-  DateTime = EddyDataWithPosix$DateTime
+  DateTime = EddyDataWithPosix$DateTime     # take time stamp form input data
   , DoY = as.POSIXlt(DateTime - 15*60)$yday # midnight belongs to the previous
 )
 ```
+
+Now the aggregation can be done on data grouped by DoY. The notation `!!` tells
+`summarise` to use the variable `autoCorr` instead of a column with that name.
 ```{r}
-aggDay <- results %>% group_by(DoY) %>% 
+aggDay <- results %>% 
+  group_by(DoY) %>% 
   summarise(
     DateTime = first(DateTime)
-    , nRec = sum( NEE_uStar_fqc == 0, na.rm = TRUE)
-    , nEff = computeEffectiveNumObs(
+    ,nEff = lognorm::computeEffectiveNumObs(
        resid, effAcf = !!autoCorr, na.rm = TRUE)
+    , nRec = sum(is.finite(NEE_orig_sd))
     , NEE = mean(NEE_uStar_f, na.rm = TRUE)
     , sdNEE = if (nEff <= 1) NA_real_ else sqrt(
-      mean(NEE_uStar_fsd^2, na.rm = TRUE) / (nEff - 1)) 
-    , sdNEEuncorr = if (nRec == 0) NA_real_ else sqrt(
-       mean(NEE_uStar_fsd^2, na.rm = TRUE) / (nRec - 1))
+      mean(NEE_orig_sd^2, na.rm = TRUE) / (nEff - 1)) 
+    , sdNEEuncorr = if (nRec <= 1) NA_real_ else sqrt(
+       mean(NEE_orig_sd^2, na.rm = TRUE) / (nRec - 1))
+    , .groups = "drop_last"
   )
 aggDay
 ```
+
 ```{r uncBand, echo=FALSE}
 aggDay %>% 
   filter(between(DoY, 150, 200)) %>% 
   select(DateTime, NEE, sdNEE, sdNEEuncorr) %>% 
-  gather("scenario","sdValue", sdNEE, sdNEEuncorr) %>% 
+  #gather("scenario","sdValue", sdNEE, sdNEEuncorr) %>% 
+  pivot_longer(c(sdNEE, sdNEEuncorr), names_to = "scenario", values_to = "sdValue") %>% 
   ggplot(aes(DateTime, NEE)) +
   geom_line() +
   geom_ribbon(aes(
@@ -208,3 +275,85 @@ aggDay %>%
 
 The confidence bounds (+-1.96 stdDev) computed with accounting for correlations 
 in this case are about twice the ones computed with neglecting correlations.
+
+## u* threshold uncertainty
+There is also flux uncertainty due to uncertainty in u* threshold estimation. Since the same threshold 
+is used for all times in a given uStar scenario, the relative uncertainty 
+of this component does not decrease when aggregating across time.
+
+The strategy is to 
+
+1\. estimate distribution of u* threshold
+
+2\. compute time series of NEE (or other values of interest) for draws from 
+   this distribution, i.e. for many uStar-scenarios
+
+3\. compute each associated aggregated value
+
+4\. and then look at the distribution of the aggregated values. 
+
+Note that the entire processing down to the aggregated value
+has to be repeated for each uStar scenario.
+Hence, obtaining a good estimate of this uncertainty is computationally 
+expensive.
+
+1\. First, we estimate many samples of the probability density of the 
+unknown uStar threshold.
+
+```{r  message=FALSE, warning=FALSE}
+# for run-time of the vignette creation, here we use only few (3) uStar quantiles 
+# For real-world applications, a larger sample (> 30) is required.
+nScen <- 3 # nScen <- 39
+
+EddyDataWithPosix <- Example_DETha98 %>% 
+  filterLongRuns("NEE") %>% 
+  fConvertTimeToPosix('YDH',Year = 'Year',Day = 'DoY', Hour = 'Hour')
+EProc <- sEddyProc$new(
+  'DE-Tha', EddyDataWithPosix, c('NEE','Rg','Tair','VPD', 'Ustar'))
+EProc$sEstimateUstarScenarios( 
+  nSample = nScen*4, probs = seq(0.025,0.975,length.out = nScen) )
+uStarSuffixes <- colnames(EProc$sGetUstarScenarios())[-1]
+uStarSuffixes # in real world should use > 30
+```
+2\. Produce time series of gapfilled NEE for each scenario. They are
+stored in columns distinguished by a suffix with the quantile.
+
+```{r message=FALSE, warning=FALSE}
+EProc$sMDSGapFillUStarScens('NEE')
+```
+
+3\. Compute the annual mean for each scenario. 
+Method `sEddyProc_sApplyUStarScen` calls a user-provided function that takes
+an argument suffix for each u*-threshold scenario. Here, we use it to
+create the corresponding NEE column name and compute mean across this column
+in the data exported from REddyProc.
+
+```{r}
+computeMeanNEE <- function(ds, suffix){
+  column_name <- paste0("NEE_",suffix,"_f")
+  mean(ds[[column_name]])
+}
+FilledEddyData <- EProc$sExportResults()
+NEEagg <- unlist(EProc$sApplyUStarScen(computeMeanNEE, FilledEddyData))
+NEEagg
+```
+4\. compute uncertainty across aggregated values
+```{r}
+sdNEEagg_ustar <- sd(NEEagg)
+sdNEEagg_ustar
+```
+## Combined aggregated uncertainty
+
+Assuming that the uncertainty due to unknown u*threshold is independent
+from the random uncertainty, the variances add.
+
+```{r}
+sdAnnual <- data.frame(
+  sdRand = resRand$seMean,
+  sdUstar = sdNEEagg_ustar,
+  sdComb = sqrt(resRand$seMean^2 + sdNEEagg_ustar^2) 
+)
+sdAnnual
+```
+
+

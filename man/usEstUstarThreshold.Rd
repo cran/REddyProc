@@ -8,7 +8,7 @@ seasonal and temperature subsets.}
         ds$sDateTime), ctrlUstarEst = usControlUstarEst(), 
     ctrlUstarSub = usControlUstarSubsetting(), 
     fEstimateUStarBinned = usEstUstarThresholdSingleFw2Binned, 
-    isCleaned = FALSE)}
+    isCleaned = FALSE, isInBootstrap = FALSE)}
 \arguments{
   \item{ds}{data.frame with columns "sDateTime", "Ustar", "NEE", "Tair", and "Rg"}
   \item{seasonFactor}{factor for subsetting times (see details)}
@@ -24,6 +24,9 @@ estimate UStar on a single binned series,
 see \code{\link{usEstUstarThresholdSingleFw2Binned}}}
   \item{isCleaned}{set to TRUE, if the data was cleaned already,
 to avoid expensive call to \code{usGetValidUstarIndices}.}
+  \item{isInBootstrap}{set to TRUE if this is called from
+\code{\link{sEddyProc_sEstimateUstarScenarios}} to avoid further
+bootstraps in change-point detection}
 }
 \details{The threshold for sufficiently turbulent conditions u * (Ustar)
 is estimated for different subsets of the time series.
@@ -129,7 +132,7 @@ Towards a standardized processing of net ecosystem exchange measured with
 eddy covariance technique: algorithms and uncertainty estimation.
 Biogeosciences 3(4): 571-583.}
 \author{TW, OM
-Department for Biogeochemical Integration at MPI-BGC, Jena, Germany <REddyProc-help@bgc-jena.mpg.de> [cph], Thomas Wutzler <twutz@bgc-jena.mpg.de> [aut, cre], Markus Reichstein <mreichstein@bgc-jena.mpg.de> [aut], Antje Maria Moffat <antje.moffat@bgc.mpg.de> [aut, trl], Olaf Menzer <omenzer@bgc-jena.mpg.de> [ctb], Mirco Migliavacca <mmiglia@bgc-jena.mpg.de> [aut], Kerstin Sickel <ksickel@bgc-jena.mpg.de> [ctb, trl], Ladislav Šigut <sigut.l@czechglobe.cz> [ctb]}
+Department for Biogeochemical Integration at MPI-BGC, Jena, Germany <REddyProc-help@bgc-jena.mpg.de> [cph], Thomas Wutzler <twutz@bgc-jena.mpg.de> [aut, cre], Markus Reichstein <mreichstein@bgc-jena.mpg.de> [aut], Antje Maria Moffat <antje.moffat@bgc.mpg.de> [aut, trl], Olaf Menzer <omenzer@bgc-jena.mpg.de> [ctb], Mirco Migliavacca <mmiglia@bgc-jena.mpg.de> [aut], Kerstin Sickel <ksickel@bgc-jena.mpg.de> [ctb, trl], Ladislav <U+0160>igut <sigut.l@czechglobe.cz> [ctb]}
 
 
 

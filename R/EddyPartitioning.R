@@ -6,14 +6,37 @@ sEddyProc_sGLFluxPartitionUStarScens <- function(
   , uStarScenKeep = character(0) ##<< Scalar string specifying the scenario
   ## for which to keep parameters (see \code{\link{sEddyProc_sApplyUStarScen}}.
   ## Defaults to the first scenario.
+  , isWarnReplaceColumns = FALSE  ##<< overriding default to avoid
+  ## the warning on replacing output columns, because this is intended when
+  ## processing several uStar scenarios.
+  , warnOnOtherErrors = FALSE ##<< Set to TRUE to only display a warning on
+  ## errors in uStarScenarios other than uStarScenKeep instead of stopping.
+  , controlGLPart = partGLControl()	##<< further default parameters
 ) {
   ##details<<
   ## Daytime-based partitioning of measured net ecosystem fluxes into
   ## gross primary production (GPP) and ecosystem respiration (Reco)
   ## for all u* threshold scenarios.
-  tmp <- sApplyUStarScen(
-    .self$sGLFluxPartition, ..., uStarScenKeep = uStarScenKeep)
-  NULL
+  suffixes <- .self$sGetUstarSuffixes()
+  ##details<<
+  ## For the uStarScenKeep, a full set of output columns is returned.
+  ## For the other scenarios, the bootstrap of GPP uncertainty is omitted
+  ## and columns "FP_<x>" are overridden.
+  suffixes_other <- setdiff(suffixes, uStarScenKeep)
+  controlGLPartNoBoot <- within(controlGLPart, nBootUncertainty <- 0L)
+  tmp <- .self$sApplyUStarScen(
+    .self$sGLFluxPartition, ...,
+    warnOnOtherErrors = warnOnOtherErrors,
+    uStarSuffixes = suffixes_other,
+    isWarnReplaceColumns = isWarnReplaceColumns,
+    controlGLPart = controlGLPartNoBoot
+    )
+  tmp2 <- .self$sGLFluxPartition(
+    ...,
+    suffix = uStarScenKeep,
+    isWarnReplaceColumns = isWarnReplaceColumns,
+    controlGLPart = controlGLPart
+    )
 }
 sEddyProc$methods(
   sGLFluxPartitionUStarScens = sEddyProc_sGLFluxPartitionUStarScens)
@@ -79,7 +102,7 @@ sEddyProc_sTKFluxPartitionUStarScens <- function(
   ## Daytime-based partitioning of measured net ecosystem fluxes into
   ## gross primary production (GPP) and ecosystem respiration (Reco)
   ## for all u* threshold scenarios.
-  tmp <- sApplyUStarScen(
+  tmp <- .self$sApplyUStarScen(
     .self$sTKFluxPartition, ..., uStarScenKeep = uStarScenKeep )
   NULL
 }
@@ -114,7 +137,7 @@ sEddyProc_sMRFluxPartitionUStarScens <- function(
   ## Nighttime-based partitioning of measured net ecosystem fluxes into
   ## gross primary production (GPP) and ecosystem respiration (Reco)
   ## for all u* threshold scenarios.
-  tmp <- sApplyUStarScen(
+  tmp <- .self$sApplyUStarScen(
     .self$sMRFluxPartition, ..., uStarScenKeep = uStarScenKeep)
   ##value<< NULL, it adds output columns in the class
   invisible(tmp)
@@ -428,6 +451,7 @@ fOptimSingleE0 <- function(
       , algorithm = algorithm
     )
     # Remove points with residuals outside percTrim quantiles
+    # plot(NEEnight ~ TempKelvin)
     Residuals.V.n <- resid(NLS.L)
     #Residuals.V.n <- fLloydTaylor(R_ref = coef(summary(NLS.L))['R_ref', 1]
     #, E_0 = coef(summary(NLS.L))['E_0', 1],
@@ -600,7 +624,6 @@ fRegrE0fromShortTerm = function(
     #! Window size of 7 days corresponds to full window length of 15 days as
     # in paper, non-congruent with PV-Wave code of 14 days
     #! New code: Last window has minimum width of WinDays
-    #
     Subset.b <-
       DayCounter >= DayStart.i &
       DayCounter <= DayEnd.i &
@@ -609,6 +632,8 @@ fRegrE0fromShortTerm = function(
     NEEnight <- subset(NightFlux, Subset.b)
     Temp.V.n <- subset(Temp, Subset.b)
     TempKelvin <- fConvertCtoK(Temp.V.n)
+    #if (DayMiddle.i > 220) recover()
+    #plot(NEEnight ~ TempKelvin)
     #
     if (length(NEEnight) > MinData.n && diff(range(TempKelvin)) >= TempRange) {
       #CountRegr.i <- CountRegr.i + 1

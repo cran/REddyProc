@@ -3,12 +3,14 @@
 \title{LightResponseCurveFitter optimLRCBounds}
 \description{Optimize parameters with refitting with some fixed parameters if outside bounds}
 \usage{LightResponseCurveFitter_optimLRCBounds(theta0, 
-    parameterPrior, ..., lastGoodParameters, 
+    parameterPrior, ..., dsDay, lastGoodParameters, 
     ctrl)}
 \arguments{
   \item{theta0}{initial parameter estimate}
   \item{parameterPrior}{prior estimate of model parameters}
-  \item{\dots}{further parameters to \code{.optimLRC}, such as \code{dsDay}}
+  \item{\dots}{further parameters to \code{.optimLRC},}
+  \item{dsDay}{argument to \code{.optimLRC}, here checked
+for occurrence of high VPD}
   \item{lastGoodParameters}{parameters vector of last successful fit}
   \item{ctrl}{list of further controls, such as
 \code{isNeglectVPDEffect = TRUE}}
@@ -32,7 +34,7 @@ beta parameter}
 (see \code{\link{LightResponseCurveFitter_fitLRC}}) }}
 
 \author{TW, MM
-Department for Biogeochemical Integration at MPI-BGC, Jena, Germany <REddyProc-help@bgc-jena.mpg.de> [cph], Thomas Wutzler <twutz@bgc-jena.mpg.de> [aut, cre], Markus Reichstein <mreichstein@bgc-jena.mpg.de> [aut], Antje Maria Moffat <antje.moffat@bgc.mpg.de> [aut, trl], Olaf Menzer <omenzer@bgc-jena.mpg.de> [ctb], Mirco Migliavacca <mmiglia@bgc-jena.mpg.de> [aut], Kerstin Sickel <ksickel@bgc-jena.mpg.de> [ctb, trl], Ladislav Šigut <sigut.l@czechglobe.cz> [ctb]}
+Department for Biogeochemical Integration at MPI-BGC, Jena, Germany <REddyProc-help@bgc-jena.mpg.de> [cph], Thomas Wutzler <twutz@bgc-jena.mpg.de> [aut, cre], Markus Reichstein <mreichstein@bgc-jena.mpg.de> [aut], Antje Maria Moffat <antje.moffat@bgc.mpg.de> [aut, trl], Olaf Menzer <omenzer@bgc-jena.mpg.de> [ctb], Mirco Migliavacca <mmiglia@bgc-jena.mpg.de> [aut], Kerstin Sickel <ksickel@bgc-jena.mpg.de> [ctb, trl], Ladislav <U+0160>igut <sigut.l@czechglobe.cz> [ctb]}
 
 
 

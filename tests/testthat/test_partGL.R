@@ -583,12 +583,14 @@ test_that("partGLInterpolateFluxes runs with rectangular LRCFitter",{
 
 #resLRCEx1
 test_that("partitionNEEGL",{
+  skip_on_cran()
   dsNEE1 <- dsNEE
   resEx <- resLRCEx1
   #DoY.V.n <- as.POSIXlt(dsNEE1$sDateTime)$yday + 1L
   #Hour.V.n <- as.POSIXlt(dsNEE1$sDateTime)$hour + as.POSIXlt(dsNEE1$sDateTime)$min/60
   #dsNEE1$PotRad_NEW <- fCalcPotRadiation(DoY.V.n, Hour.V.n, LatDeg = 45.0, LongDeg = 1, TimeZoneHour = 0 )
   tmp <- partitionNEEGL( dsNEE1,RadVar = 'Rg_f')
+  #tmp <- partitionNEEGL( dsNEE1,RadVar = 'Rg_f', isVerbose = FALSE) #no messages
   #tmp <- partitionNEEGL( dsNEE1,RadVar = 'Rg_f', controlGLPart = partGLControl(nBootUncertainty = 0L, isAssociateParmsToMeanOfValids = FALSE))
   expect_equal( nrow(dsNEE1), nrow(tmp) )
   #tmp[ is.finite(tmp$FP_beta), ]	# note FP_dRecPar is not zero, because iCentralRec != iMeanRec
@@ -629,6 +631,7 @@ test_that("partitionNEEGL",{
 })
 
 test_that("partitionNEEGL with Lasslop options",{
+  skip_on_cran()
   dsNEE1 <- dsNEE
   #ds <- data.frame( NEE = dsNEE1$NEE_f, sdNEE = dsNEE1$NEE_fsd, Rg = dsNEE1$Rg_f, VPD = dsNEE1$VPD_f, Temp = dsNEE1$Temp, isDay = dsNEE1$isDay, isNight = dsNEE$isNight )
   resEx <- resLRCEx1
@@ -695,6 +698,7 @@ isTimeInTestPeriod <- function(sDateTime){
 }
 
 test_that("partitionNEEGL sparse data",{
+  skip_on_cran()
   dsNEE1 <- dsNEE
   #flag  all data except one day bad in order  to associate the same
   #data with several windows
@@ -703,9 +707,10 @@ test_that("partitionNEEGL sparse data",{
   #plot( NEE_f ~ sDateTime, dsNEE1 )
   ds <- partGLExtractStandardData(dsNEE1)
   #
-  dsTempSens <- REddyProc:::partGLFitNightTimeTRespSens( ds
-                                                         , nRecInDay = 48L
-                                                         , controlGLPart = partGLControl()
+  dsTempSens <- REddyProc:::partGLFitNightTimeTRespSens(
+    ds
+    , nRecInDay = 48L
+    , controlGLPart = partGLControl()
   )
   resLRC <- REddyProc:::partGLFitLRCWindows(
     ds, dsTempSens = dsTempSens, lrcFitter = RectangularLRCFitter() )
@@ -735,6 +740,7 @@ test_that("partitionNEEGL sparse data",{
 })
 
 test_that("partitionNEEGL isNeglectVPDEffect",{
+  skip_on_cran()
   dsNEE1 <- dsNEE
   #flag all VPD data except one day as bad to associate the same data with several windows
   dsNEE1$VPD_fqc[ (dsNEE$sDateTime >= as.POSIXct("1998-06-03 00:00:00",tz = tzEx)) &
@@ -900,6 +906,7 @@ test_that("partGLPartitionFluxes missing prediction VPD",{
 
 
 test_that("partitionNEEGL fixed tempSens",{
+  skip_on_cran()
   dsNEE1 <- dsNEE
   #
   ds <- dsNEE1
@@ -966,6 +973,7 @@ test_that("partitionNEEGL long gap",{
 })
 
 test_that("partitionNEETK",{
+  skip_on_cran()
   dsNEE1 <- dsNEE
   resEx <- resLRCEx1
   #DoY.V.n <- as.POSIXlt(dsNEE1$sDateTime)$yday + 1L
@@ -1046,9 +1054,29 @@ test_that("no nighttime data",{
                     sDateTime <= as.POSIXct("1998-09-01 21:45:00",tz = tzEx))
   ds <- ds[,c('DateTime',cols)]
   ds$NEE_f[ds$Rg_f <= 10] <- NA  # simulate having no night-time records
-  EProc <- sEddyProc$new('DE-ThaSummer', ds, cols)
+  EProc <- suppressWarnings(sEddyProc$new('DE-ThaSummer', ds, cols))
   EProc$sSetLocationInfo(LatDeg = 51.0, LongDeg = 13.6, TimeZoneHour = 1)
   EProc$sGLFluxPartition(controlGLPart = partGLControl(fixedTempSens = data.frame(
     E0 = 150, sdE0 = 50, RRef = 20)))
+})
+
+.test_sEddyProc_sGLFluxPartitionUStarScens <- function(){}
+test_that("sEddyProc_sGLFluxPartitionUStarScens",{
+  dsTest <- Example_DETha98_Filled %>% mutate(
+    NEE_uStar_f = NEE, NEE_uStar_fqc = NEE_fqc, NEE_uStar_fsd = NEE_fsd,
+    NEE_U50_f = NEE, NEE_U50_fqc = NEE_fqc, NEE_U50_fsd = NEE_fsd
+    ) %>%
+    select(-.data$sDateTime)
+  EProc <- sEddyProc$new(
+    'DE-Tha', dsTest, setdiff(names(dsTest), c("NEE_fnum","NEE_fwin")))
+  EProc$sSetUStarSeasons(1L)
+  EProc$sSetUstarScenarios(data.frame(season = 1L, uStar = 0.28, U50 = 0.38))
+  EProc$sSetLocationInfo(LatDeg = 51.0, LongDeg = 13.6, TimeZoneHour = 1)
+  #EProc$sMDSGapFill('Tair', FillAll = FALSE,  minNWarnRunLength = NA)
+  #EProc$sMDSGapFill('VPD', FillAll = FALSE,  minNWarnRunLength = NA)
+  #EProc$trace(sGLFluxPartitionUStarScens, recover); # EProc$untrace(sGLFluxPartitionUStarScens)
+  EProc$sGLFluxPartitionUStarScens(uStarScenKeep = "U50")
+  expect_true(all(c("GPP_DT_uStar","GPP_DT_U50", "GPP_DT_U50_SD") %in%
+                    names(EProc$sTEMP)))
 })
 

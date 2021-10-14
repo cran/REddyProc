@@ -1,23 +1,38 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
 
-<title>bigleaf.utf8.md</title>
+<title>Using bigleaf functions</title>
 
 
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
-<style type="text/css">code{white-space: pre;}</style>
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
 <style type="text/css" data-origin="pandoc">
 a.sourceLine { display: inline-block; line-height: 1.25; }
 a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
@@ -36,7 +51,7 @@ a.sourceLine { text-indent: -1em; padding-left: 1em; }
 pre.numberSource a.sourceLine
   { position: relative; left: -4em; }
 pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
+  { content: attr(title);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
     border: none; pointer-events: all; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
@@ -106,6 +121,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
+
 <style type="text/css">body {
 background-color: #fff;
 margin: 1em auto;
@@ -116,9 +132,6 @@ padding-right: 2em;
 font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 font-size: 14px;
 line-height: 1.35;
-}
-#header {
-text-align: center;
 }
 #TOC {
 clear: both;
@@ -287,7 +300,8 @@ code > span.st { color: #d14; }
 code > span.co { color: #888888; font-style: italic; } 
 code > span.ot { color: #007020; } 
 code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
 
@@ -300,6 +314,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 
 
+<h1 class="title toc-ignore">Using bigleaf functions</h1>
 
 
 
@@ -307,75 +322,75 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <h1>bigleaf package replacing GeoFunctions of REddyProc</h1>
 <p><code>REddyProc</code> package included several utility functions that were somewhat out of the package scope. These functions are removed from package.</p>
 <p>This vignette shows how to replace them by functions from the <code>bigleaf</code> package.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="cf">if</span> (<span class="op">!</span><span class="kw">require</span>(<span class="st">&quot;bigleaf&quot;</span>, <span class="dt">quietly =</span> <span class="ot">TRUE</span>)) <span class="kw">stop</span>(</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">  <span class="st">&quot;bigleaf package must be installed to create this vignette.&quot;</span>)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">library</span>(REddyProc)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="cf">if</span> (<span class="op">!</span><span class="kw">require</span>(<span class="st">&quot;bigleaf&quot;</span>, <span class="dt">quietly =</span> <span class="ot">TRUE</span>)) <span class="kw">stop</span>(</a>
+<a class="sourceLine" id="cb1-2" title="2">  <span class="st">&quot;bigleaf package must be installed to create this vignette.&quot;</span>)</a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="kw">library</span>(REddyProc)</a></code></pre></div>
 <div id="vapour-pressure-deficit-vpd" class="section level2">
 <h2>Vapour pressure deficit (VPD)</h2>
 <p><strong>Vapour pressure deficit (VPD)</strong> was computed with REddyProc in <span class="math inline">\(hPa\)</span> from relative humidity in <span class="math inline">\(\%\)</span> and air temperature in <span class="math inline">\(^{\circ}C\)</span>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">VPD0 &lt;-<span class="st"> </span><span class="kw">fCalcVPDfromRHandTair</span>(DEGebExample<span class="op">$</span>rH, DEGebExample<span class="op">$</span>Tair)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">VPD0 &lt;-<span class="st"> </span><span class="kw">fCalcVPDfromRHandTair</span>(DEGebExample<span class="op">$</span>rH, DEGebExample<span class="op">$</span>Tair)</a></code></pre></div>
 <p><code>bigleaf</code> package computes VPD in <span class="math inline">\(kPa\)</span> and requires relative humidity as fraction .</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">VPD.hPa &lt;-<span class="st"> </span><span class="kw">rH.to.VPD</span>(DEGebExample<span class="op">$</span>rH<span class="op">/</span><span class="dv">100</span>, DEGebExample<span class="op">$</span>Tair)<span class="op">*</span><span class="dv">10</span></a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">VPD.hPa &lt;-<span class="st"> </span><span class="kw">rH.to.VPD</span>(DEGebExample<span class="op">$</span>rH<span class="op">/</span><span class="dv">100</span>, DEGebExample<span class="op">$</span>Tair)<span class="op">*</span><span class="dv">10</span></a></code></pre></div>
 <p><strong>Saturation vapor pressure (SVP)</strong> or eSat in <span class="math inline">\(hPa\)</span> was computed from air temperature.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">Tair &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">10</span>,<span class="dv">25</span>,<span class="dt">by =</span> <span class="dv">5</span>)</a></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">eSat0 &lt;-<span class="st"> </span><span class="kw">fCalcSVPfromTair</span>(Tair)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">Tair &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">10</span>,<span class="dv">25</span>,<span class="dt">by =</span> <span class="dv">5</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">eSat0 &lt;-<span class="st"> </span><span class="kw">fCalcSVPfromTair</span>(Tair)</a></code></pre></div>
 <p>is replaced by <code>Esat.slope</code> which uses <span class="math inline">\(kPa\)</span> as pressure unit:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">(eSat &lt;-<span class="st"> </span><span class="kw">Esat.slope</span>(Tair)<span class="op">$</span>Esat <span class="op">*</span><span class="st"> </span><span class="dv">10</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">(eSat &lt;-<span class="st"> </span><span class="kw">Esat.slope</span>(Tair)<span class="op">$</span>Esat <span class="op">*</span><span class="st"> </span><span class="dv">10</span>)</a></code></pre></div>
 <pre><code>## [1] 12.26030 17.01672 23.32596 31.60057</code></pre>
 <p><strong>Actual vapor pressure (AVP)</strong> or e in <span class="math inline">\(hPa\)</span> was also computed from Vapor mole fraction (VMF) in <span class="math inline">\(mol/mol\)</span> and pressure in <span class="math inline">\(hPa\)</span>.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">VMF &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="fl">0.01</span>,<span class="fl">0.03</span>,<span class="dt">by =</span> <span class="fl">0.005</span>)</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2">press.in.hPa &lt;-<span class="st"> </span><span class="dv">1000</span> </a></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">e0 &lt;-<span class="st"> </span><span class="kw">fCalcAVPfromVMFandPress</span>(VMF, press.in.hPa)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">VMF &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="fl">0.01</span>,<span class="fl">0.03</span>,<span class="dt">by =</span> <span class="fl">0.005</span>)</a>
+<a class="sourceLine" id="cb8-2" title="2">press.in.hPa &lt;-<span class="st"> </span><span class="dv">1000</span> </a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">e0 &lt;-<span class="st"> </span><span class="kw">fCalcAVPfromVMFandPress</span>(VMF, press.in.hPa)</a></code></pre></div>
 <p>There is no replacement function, as this is just the multiplication of the two arguments.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">(e &lt;-<span class="st"> </span>VMF <span class="op">*</span><span class="st"> </span>press.in.hPa)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">(e &lt;-<span class="st"> </span>VMF <span class="op">*</span><span class="st"> </span>press.in.hPa)</a></code></pre></div>
 <pre><code>## [1] 10 15 20 25 30</code></pre>
 <p><strong>Relative humidity (rH)</strong> in <span class="math inline">\(\%\)</span> was computed from AVP in <span class="math inline">\(hPa\)</span> and temperature.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">e.in.hPa &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">30</span>,<span class="dt">by =</span> <span class="dv">5</span>)</a>
-<a class="sourceLine" id="cb12-2" data-line-number="2">Tair &lt;-<span class="st"> </span><span class="dv">25</span>           </a></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">(rH0 &lt;-<span class="st"> </span><span class="kw">fCalcRHfromAVPandTair</span>(e.in.hPa, Tair))</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">e.in.hPa &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">30</span>,<span class="dt">by =</span> <span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb12-2" title="2">Tair &lt;-<span class="st"> </span><span class="dv">25</span>           </a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">(rH0 &lt;-<span class="st"> </span><span class="kw">fCalcRHfromAVPandTair</span>(e.in.hPa, Tair))</a></code></pre></div>
 <p>Again this is replaced by a function using pressure units <span class="math inline">\(kPa\)</span> and relative humidity as fraction.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">(rH &lt;-<span class="st"> </span><span class="kw">e.to.rH</span>(e.in.hPa<span class="op">/</span><span class="dv">10</span>, Tair)<span class="op">*</span><span class="dv">100</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">(rH &lt;-<span class="st"> </span><span class="kw">e.to.rH</span>(e.in.hPa<span class="op">/</span><span class="dv">10</span>, Tair)<span class="op">*</span><span class="dv">100</span>)</a></code></pre></div>
 <pre><code>## [1]  0.0000 15.8225 31.6450 47.4675 63.2900 79.1125 94.9350</code></pre>
 </div>
 <div id="evapotranspiration-from-latent-heat-and-air-temperature" class="section level2">
 <h2>Evapotranspiration from latent heat and air temperature</h2>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">LE &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">300</span>,<span class="dv">500</span>,<span class="dt">by =</span> <span class="dv">50</span>)</a>
-<a class="sourceLine" id="cb16-2" data-line-number="2">Tair &lt;-<span class="st"> </span><span class="dv">25</span></a></code></pre></div>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">ET0 &lt;-<span class="st"> </span><span class="kw">fCalcETfromLE</span>(LE, Tair)</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">LE &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">300</span>,<span class="dv">500</span>,<span class="dt">by =</span> <span class="dv">50</span>)</a>
+<a class="sourceLine" id="cb16-2" title="2">Tair &lt;-<span class="st"> </span><span class="dv">25</span></a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1">ET0 &lt;-<span class="st"> </span><span class="kw">fCalcETfromLE</span>(LE, Tair)</a></code></pre></div>
 <p>The corresponding bigleaf function <code>LE.to.ET</code> returns a value in kg/m2/s. This needs to be converted to mmol/m2/s as returned by the former <code>fCalcETfromLE</code>.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">ETkg &lt;-<span class="st"> </span><span class="kw">LE.to.ET</span>(LE, Tair)</a>
-<a class="sourceLine" id="cb18-2" data-line-number="2">(ETmmol &lt;-<span class="st"> </span><span class="kw">kg.to.mol</span>(ETkg)<span class="op">*</span><span class="dv">1000</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1">ETkg &lt;-<span class="st"> </span><span class="kw">LE.to.ET</span>(LE, Tair)</a>
+<a class="sourceLine" id="cb18-2" title="2">(ETmmol &lt;-<span class="st"> </span><span class="kw">kg.to.mol</span>(ETkg)<span class="op">*</span><span class="dv">1000</span>)</a></code></pre></div>
 <pre><code>## [1]  6.819916  7.956569  9.093222 10.229874 11.366527</code></pre>
 </div>
 <div id="converting-visible-radiation-from-irradiance-to-photons-flux" class="section level2">
 <h2>Converting visible radiation from irradiance to photons flux</h2>
 <p>Photon flux density (PPFD) of visible light can be computed from energy in incoming radiation</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">Rg &lt;-<span class="st"> </span><span class="dv">200</span></a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1">Rg &lt;-<span class="st"> </span><span class="dv">200</span></a></code></pre></div>
 <p><code>bigleaf</code> function <code>Rg.to.PPFD</code> combines the two former REddyProc functions <code>fConvertVisibleWm2toPhotons</code> and <code>fConvertGlobalToVisible</code>.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">PPFDVis0 &lt;-<span class="st"> </span><span class="kw">fConvertGlobalToVisible</span>(<span class="kw">fConvertVisibleWm2toPhotons</span>(Rg))</a></code></pre></div>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">(PPFDVis &lt;-<span class="st"> </span><span class="kw">Rg.to.PPFD</span>(Rg))</a></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1">PPFDVis0 &lt;-<span class="st"> </span><span class="kw">fConvertGlobalToVisible</span>(<span class="kw">fConvertVisibleWm2toPhotons</span>(Rg))</a></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" title="1">(PPFDVis &lt;-<span class="st"> </span><span class="kw">Rg.to.PPFD</span>(Rg))</a></code></pre></div>
 <pre><code>## [1] 460</code></pre>
 <p>The PPFD of light including non-visible parts, i.e. former <code>fConvertVisibleWm2toPhotons</code>, is obtained by setting argument <code>frac_PAR</code> to 1.</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">(PPFDAll &lt;-<span class="st"> </span><span class="kw">Rg.to.PPFD</span>(Rg, <span class="dt">frac_PAR =</span> <span class="dv">1</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" title="1">(PPFDAll &lt;-<span class="st"> </span><span class="kw">Rg.to.PPFD</span>(Rg, <span class="dt">frac_PAR =</span> <span class="dv">1</span>))</a></code></pre></div>
 <pre><code>## [1] 920</code></pre>
 </div>
 <div id="potential-and-extraterrestrial-solar-radiation" class="section level2">
 <h2>Potential and Extraterrestrial solar radiation</h2>
 <p>Potential radiation (<span class="math inline">\(W m^{-2}\)</span>) depends on time and geo-location.</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">doy &lt;-<span class="st"> </span><span class="dv">160</span></a>
-<a class="sourceLine" id="cb26-2" data-line-number="2">hour &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">6</span>,<span class="dv">18</span>,<span class="dt">by =</span> <span class="fl">0.2</span>)</a>
-<a class="sourceLine" id="cb26-3" data-line-number="3">latDeg &lt;-<span class="st"> </span><span class="fl">39.94</span></a>
-<a class="sourceLine" id="cb26-4" data-line-number="4">longDeg &lt;-<span class="st"> </span><span class="fl">-5.77</span></a>
-<a class="sourceLine" id="cb26-5" data-line-number="5">timezone &lt;-<span class="st"> </span><span class="op">+</span><span class="dv">1</span></a></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" title="1">doy &lt;-<span class="st"> </span><span class="dv">160</span></a>
+<a class="sourceLine" id="cb26-2" title="2">hour &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">6</span>,<span class="dv">18</span>,<span class="dt">by =</span> <span class="fl">0.2</span>)</a>
+<a class="sourceLine" id="cb26-3" title="3">latDeg &lt;-<span class="st"> </span><span class="fl">39.94</span></a>
+<a class="sourceLine" id="cb26-4" title="4">longDeg &lt;-<span class="st"> </span><span class="fl">-5.77</span></a>
+<a class="sourceLine" id="cb26-5" title="5">timezone &lt;-<span class="st"> </span><span class="op">+</span><span class="dv">1</span></a></code></pre></div>
 <p>Formerly, REddyProc provided:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">(potRad0 &lt;-<span class="st"> </span><span class="kw">fCalcPotRadiation</span>(doy, hour, latDeg, longDeg, timezone))</a></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" title="1">(potRad0 &lt;-<span class="st"> </span><span class="kw">fCalcPotRadiation</span>(doy, hour, latDeg, longDeg, timezone))</a></code></pre></div>
 <p>This is replaced by bigleaf:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw">head</span>(potRad &lt;-<span class="st"> </span><span class="kw">potential.radiation</span>(doy, hour, latDeg, longDeg, timezone))</a></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" title="1"><span class="kw">head</span>(potRad &lt;-<span class="st"> </span><span class="kw">potential.radiation</span>(doy, hour, latDeg, longDeg, timezone))</a></code></pre></div>
 <pre><code>## [1]   1.722378  48.072563  95.193985 142.957488 191.232157 239.885672</code></pre>
 <p>Extraterrestrial solar radiation was formerly computed by REddyProc by:</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1">(extRad0 &lt;-<span class="st"> </span><span class="kw">fCalcExtRadiation</span>(doy))</a></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" title="1">(extRad0 &lt;-<span class="st"> </span><span class="kw">fCalcExtRadiation</span>(doy))</a></code></pre></div>
 <p>This is replaced by bigleaf:</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1">(extRad &lt;-<span class="st"> </span><span class="kw">extraterrestrial.radiation</span>(doy))</a></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" title="1">(extRad &lt;-<span class="st"> </span><span class="kw">extraterrestrial.radiation</span>(doy))</a></code></pre></div>
 <pre><code>## [1] 1324.598</code></pre>
 <p>Required computation of sun position (<code>computeSunPosition</code>) and difference between apparent local time time and time zone time (<code>computeSolarToLocalTimeDifference</code>) have been moved to package <code>solartime</code>.</p>
 </div>

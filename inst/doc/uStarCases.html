@@ -281,6 +281,13 @@ from the data without estimating its uncertainty by a bootstrap.</p>
 EProc$sPlotNEEVersusUStarForSeason(levels(uStarTh$season)[3], dir = outDir )
 </code></pre>
 
+<pre><code>## Warning: `filter_()` was deprecated in dplyr 0.7.0.
+## Please use `filter()` instead.
+## See vignette(&#39;programming&#39;) for more help
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_warnings()` to see where this warning was generated.
+</code></pre>
+
 <p>Next, the annual estimate is used as the default in gap-filling.
 Output columns use the suffix as specified by argument <code>uSstarSuffix</code> 
 which defaults to &ldquo;uStar&rdquo;.</p>
@@ -289,8 +296,8 @@ which defaults to &ldquo;uStar&rdquo;.</p>
 EProc$sMDSGapFillAfterUstar(&#39;NEE&#39;)
 </code></pre>
 
-<pre><code>## Warning in .self$sGetUstarScenarios(): uStar scenarios not set yet. Setting
-## to annual mapping.
+<pre><code>## Warning in .self$sGetUstarScenarios(): uStar scenarios not set yet. Setting to
+## annual mapping.
 </code></pre>
 
 <pre><code class="r">grep(&quot;NEE.*_f$&quot;,names(EProc$sExportResults()), value = TRUE)
@@ -320,17 +327,12 @@ be investigated.</p>
     nSample = 100L, probs = c(0.05, 0.5, 0.95))
 </code></pre>
 
-<pre><code>## Warning in .estimateUStarSeason(...): sEstUstarThreshold: too few finite
-## records within season (n = 699) for 7 temperature classes. Need at least n
-## = 700. Returning NA for this Season.
-</code></pre>
-
 <pre><code>## 
 </code></pre>
 
 <pre><code>## Estimated UStar distribution of:
-##      uStar   5%       50%       95%
-## 1 0.41625 0.39 0.4588977 0.6374028 
+##      uStar        5%       50%      95%
+## 1 0.41625 0.3879846 0.4658333 0.673739 
 ## by using  100 bootstrap samples and controls:
 ##                        taClasses                    UstarClasses 
 ##                               7                              20 
@@ -346,12 +348,12 @@ be investigated.</p>
 EProc$sGetUstarScenarios()
 </code></pre>
 
-<pre><code>##    season   uStar  U05       U50       U95
-## 1 1998001 0.41625 0.39 0.4588977 0.6374028
-## 2 1998003 0.41625 0.39 0.4588977 0.6374028
-## 3 1998006 0.41625 0.39 0.4588977 0.6374028
-## 4 1998009 0.41625 0.39 0.4588977 0.6374028
-## 5 1998012 0.41625 0.39 0.4588977 0.6374028
+<pre><code>##    season   uStar       U05       U50      U95
+## 1 1998001 0.41625 0.3879846 0.4658333 0.673739
+## 2 1998003 0.41625 0.3879846 0.4658333 0.673739
+## 3 1998006 0.41625 0.3879846 0.4658333 0.673739
+## 4 1998009 0.41625 0.3879846 0.4658333 0.673739
+## 5 1998012 0.41625 0.3879846 0.4658333 0.673739
 </code></pre>
 
 <p>By default the annually aggregated threshold estimates are used for each season
@@ -362,22 +364,14 @@ use method <code>sEddyProc_sGetEstimatedUstarThresholdDistribution</code>:</p>
 <pre><code class="r">(uStarThAgg &lt;- EProc$sGetEstimatedUstarThresholdDistribution())
 </code></pre>
 
-<pre><code>##   aggregationMode seasonYear  season     uStar        5%       50%
-## 1          single         NA    &lt;NA&gt; 0.4162500 0.3900000 0.4588977
-## 2            year       1998    &lt;NA&gt; 0.4162500 0.3900000 0.4588977
-## 3          season       1998 1998001 0.4162500 0.3900000 0.4588977
-## 4          season       1998 1998003 0.4162500 0.3253793 0.3968182
-## 5          season       1998 1998006 0.3520000 0.3180227 0.3900000
-## 6          season       1998 1998009 0.3369231 0.2733118 0.3932158
-## 7          season       1998 1998012 0.1740000 0.2395810 0.4313831
-##         95%
-## 1 0.6374028
-## 2 0.6374028
-## 3 0.6374028
-## 4 0.5049168
-## 5 0.4508544
-## 6 0.5171098
-## 7 0.6327361
+<pre><code>##   aggregationMode seasonYear  season     uStar        5%       50%       95%
+## 1          single         NA    &lt;NA&gt; 0.4162500 0.3879846 0.4658333 0.6737390
+## 2            year       1998    &lt;NA&gt; 0.4162500 0.3879846 0.4658333 0.6737390
+## 3          season       1998 1998001 0.4162500 0.3879846 0.4658333 0.6737390
+## 4          season       1998 1998003 0.4162500 0.3221361 0.4164583 0.5919896
+## 5          season       1998 1998006 0.3520000 0.3236750 0.3917619 0.4442306
+## 6          season       1998 1998009 0.3369231 0.2449602 0.3898456 0.5301111
+## 7          season       1998 1998012 0.1740000 0.2444143 0.4351875 0.6236007
 </code></pre>
 
 <p>In conjunction with method <code>usGetSeasonalSeasonUStarMap</code> and 
@@ -394,11 +388,11 @@ EProc$sGetUstarScenarios()
 </code></pre>
 
 <pre><code>##    season     uStar       U05       U50       U95
-## 3 1998001 0.4162500 0.3900000 0.4588977 0.6374028
-## 4 1998003 0.4162500 0.3253793 0.3968182 0.5049168
-## 5 1998006 0.3520000 0.3180227 0.3900000 0.4508544
-## 6 1998009 0.3369231 0.2733118 0.3932158 0.5171098
-## 7 1998012 0.1740000 0.2395810 0.4313831 0.6327361
+## 3 1998001 0.4162500 0.3879846 0.4658333 0.6737390
+## 4 1998003 0.4162500 0.3221361 0.4164583 0.5919896
+## 5 1998006 0.3520000 0.3236750 0.3917619 0.4442306
+## 6 1998009 0.3369231 0.2449602 0.3898456 0.5301111
+## 7 1998012 0.1740000 0.2444143 0.4351875 0.6236007
 </code></pre>
 
 <p>Several function whose name ends with &#39;UstarScens&#39;
@@ -421,7 +415,7 @@ EProc$sMRFluxPartitionUStarScens()
 grep(&quot;GPP_.*_f$&quot;,names(EProc$sExportResults()), value = TRUE)
 </code></pre>
 
-<pre><code>## [1] &quot;GPP_U95_f&quot;   &quot;GPP_U50_f&quot;   &quot;GPP_U05_f&quot;   &quot;GPP_uStar_f&quot;
+<pre><code>## [1] &quot;GPP_U05_f&quot;   &quot;GPP_U50_f&quot;   &quot;GPP_U95_f&quot;   &quot;GPP_uStar_f&quot;
 </code></pre>
 
 <pre><code class="r">if (FALSE) {

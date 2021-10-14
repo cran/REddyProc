@@ -1,6 +1,6 @@
 #' @export
 partitionNEEGL <- function(
-		### Partitioning NEE fluxes into GP and Reco after daytime method.
+		### Partition NEE fluxes into GP and Reco using the daytime method.
 		ds							##<< dataset with all the specified input columns
 		  ## and full days in equidistant times
 		, NEEVar = if (!missing(NEEVar.s)) NEEVar.s else paste0('NEE', suffixDash, '_f')		##<< Variable of NEE
@@ -129,6 +129,7 @@ partitionNEEGL <- function(
 				dsTempSens <- partGLFitNightTimeTRespSens(dsR
 						, nRecInDay = nRecInDay
 						, controlGLPart = controlGLPart
+						, isVerbose = isVerbose
 				)
 			} else	{
 				dsTempSens <- controlGLPart$fixedTempSens
@@ -147,6 +148,7 @@ partitionNEEGL <- function(
 									, nRecInDay = nRecInDay
 									, E0Win = dsTempSens
 									, controlGLPart = controlGLPart
+									, isVerbose = isVerbose
 							))
 					dsTempSens$RRef <- resRef15$RRef
 				}
@@ -163,6 +165,7 @@ partitionNEEGL <- function(
 			, dsTempSens = dsTempSens
 			, controlGLPart = controlGLPart
 			, lrcFitter = lrcFitter
+			, isVerbose = isVerbose
 	)
 	# if no windows was fitted, return error. Else error on missing columns
 	# (no parameter columns returned)
@@ -195,12 +198,15 @@ partitionNEEGL <- function(
 					, resParms
 					, controlGLPart = controlGLPart
 					, lrcFitter = lrcFitter
+					, isVerbose = isVerbose
 			)
 	if (!controlGLPart$isNeglectVPDEffect &&
 	    controlGLPart$isRefitMissingVPDWithNeglectVPDEffect) {
 		##details<<
 		## While the extrapolation uses filled data, the parameter optimization
-		## uses only measured data, i.e. with specified quality flag.
+		## may use only measured data, i.e. with specified quality flag.
+		## Even with using filled VPD, there may be large gaps that have not been
+		## filled.
 		## With the common case where VPD is missing for fitting the LRC, by default
 		## (with \code{controlGLPart$isRefitMissingVPDWithNeglectVPDEffect = TRUE})
 		## is to redo the estimation of LRC parameters with neglecting the VPD-effect.
@@ -337,14 +343,14 @@ partGLControl <- function(
 		  ## repeating estimation
 			## with \code{isNeglectVPDEffect = TRUE} trying to predict when VPD
 			## is missing
-		, fixedTempSens = data.frame(
-		  E0 = NA_real_, sdE0 = NA_real_, RRef = NA_real_)	##<< data.frame
+		, fixedTempSens = data.frame( ##<< data.frame
 		  ## of one row or nRow = nWindow
 			## corresponding to return value of \code{partGLFitNightTimeTRespSens}
 			## While column \code{RRef} is used only as a  prior and initial value for
 			## the daytime-fitting and can be NA,
 			## \code{E0} is used as given temperature sensitivity and varied according
 			## to \code{sdE0} in the bootstrap.
+		  E0 = NA_real_, sdE0 = NA_real_, RRef = NA_real_)	
 		, replaceMissingSdNEEParms = c(perc = 0.2, minSd = 0.7)	##<< parameters for
 		  ## replacing missing standard deviation of NEE.
 			## see \code{replaceMissingSdByPercentage}.
@@ -847,10 +853,10 @@ partGLFitLRCOneWindow <- function(
 		idx <- sample(nrow(dsDay), replace = TRUE)
 		dsDayB <- dsDay[idx, ]
 		theta[iPosE0] <- E0[iBoot]
-		resOptBoot <- lrcFitter$optimLRCOnAdjustedPrior(theta, iOpt = iOpt
+		resOptBoot <- try(lrcFitter$optimLRCOnAdjustedPrior(theta, iOpt = iOpt
 		  , dsDay = dsDayB
-			, parameterPrior = parameterPrior, ctrl = controlGLPart)
-		if (resOptBoot$convergence == 0L) {
+			, parameterPrior = parameterPrior, ctrl = controlGLPart), silent = TRUE)
+		if (!inherits(resOptBoot, "try-error") && resOptBoot$convergence == 0L) {
 			#TODO: also remove the very bad cases?
 			ans[iBoot, ]<- resOptBoot$theta
 		}else{
@@ -871,6 +877,7 @@ partGLInterpolateFluxes <- function(
 		, controlGLPart = partGLControl()	##<< further default parameters,
 		  ## see \code{\link{partGLControl}}
 		, lrcFitter	##<< R5 class instance responsible for fitting the LRC curve
+		, isVerbose = TRUE		##<< set to FALSE to suppress messages
 ) {
 	##author<< TW
 	##seealso<< \code{link{partitionNEEGL}}
@@ -881,7 +888,7 @@ partGLInterpolateFluxes <- function(
 	# create a dataframe with index of rows of estimates before and after and
 	# corresponding weights
 	iValidWin <- which(is.finite(resParms$parms_out_range))
-	summaryLRC <- resParms %>% select_(~-resOpt) %>% slice(iValidWin)
+	summaryLRC <- resParms %>% select(-.data$resOpt) %>% slice(iValidWin)
     resOptList <- resParms$resOpt[iValidWin]
 	nLRC <- nrow(summaryLRC)
 	nRec <- length(Rg)

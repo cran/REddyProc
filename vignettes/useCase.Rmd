@@ -1,10 +1,11 @@
 ---
+title: REddyProc typical workflow    
 output: 
   rmarkdown::html_vignette:
     keep_md: true
 vignette: >
   %\VignetteEngine{knitr::rmarkdown_notangle}
-  %\VignetteIndexEntry{typical use case}
+  %\VignetteIndexEntry{REddyProc typical workflow}
   %\usepackage[UTF-8]{inputenc}
 ---
 
@@ -111,6 +112,11 @@ A fingerprint-plot is a color-coded image of the half-hourly fluxes by daytime
 on the x and and day of the year on the y axis. 
 ```{r fpNEEOrig}
 EProc$sPlotFingerprintY('NEE', Year = 1998)
+```
+
+```{r eval=FALSE, include=FALSE}
+# plot with custom color palette
+EProc$sPlotFingerprintY('NEE', Year = 1998, colors = rainbow(50), valueLimits = c(-300,300))
 ```
 
 For writing plots of data of several years to pdf see also
@@ -229,10 +235,16 @@ The partitioning needs to distinguish carefully between night-time and day-time.
 Therefore it needs a specification of geographical coordinates and time zone 
 to allow computing sunrise and sunset. Further, the missing values in the 
 used meteorological data need to be filled. 
+
+For VPD, which is important for daytime flux partitioning, and additional
+gap-filling of longer gaps based on minimum daily temperature (assumed dewpoint)
+is available.
+
 ```{r, message = FALSE}
 EProc$sSetLocationInfo(LatDeg = 51.0, LongDeg = 13.6, TimeZoneHour = 1)  
 EProc$sMDSGapFill('Tair', FillAll = FALSE,  minNWarnRunLength = NA)     
 EProc$sMDSGapFill('VPD', FillAll = FALSE,  minNWarnRunLength = NA)     
+EProc$sFillVPDFromDew() # fill longer gaps still present in VPD_f
 ```
 
 Now we are ready to invoke the partitioning, here by the night-time approach, 

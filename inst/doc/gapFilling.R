@@ -1,4 +1,4 @@
-## ----setup, include = FALSE----------------------------------------------
+## ----setup, include = FALSE---------------------------------------------------
 library(knitr)
 #rmarkdown::render("vignettes/gapFilling.Rmd")
 opts_knit$set(root.dir = '..')
@@ -20,11 +20,11 @@ knit_hooks$set(spar = function(before, options, envir) {
      }
 })
 
-## ---- include = FALSE, warning = FALSE-----------------------------------
+## ---- include = FALSE, warning = FALSE----------------------------------------
 #themeTw <- theme_bw(base_size = 10) + theme(axis.title = element_text(size = 9))
 bgiDir <- "~/bgi"
 
-## ----inputData, spar = TRUE, message = FALSE-----------------------------
+## ----inputData, spar = TRUE, message = FALSE----------------------------------
 #+++ load libraries used in this vignette
 library(REddyProc)
 library(dplyr)
@@ -34,7 +34,7 @@ EddyDataWithPosix <- fConvertTimeToPosix(
   , 'YDH', Year = 'Year', Day = 'DoY', Hour = 'Hour') 
   
 
-## ----ex2b, message = FALSE-----------------------------------------------
+## ----ex2b, message = FALSE----------------------------------------------------
 #+++ Add some (non-sense) example vectors:
 #+++ Quality flag vector (e.g. from applying ustar filter)
 QF <- rep(c(1, 0, 1, 0, 1, 0, 0, 0, 0, 0), nrow(EddyDataWithPosix) / 10)
@@ -62,7 +62,7 @@ Result_Step3.F <- EProc$sFillMDC(3)
 #Individual fill result columns are called 'VAR_...'
 EProc$sPlotHHFluxesY('VAR_fall', Year = 1998)
 
-## ----ex3 , warn = FALSE, message = FALSE---------------------------------
+## ----ex3 , warn = FALSE, message = FALSE--------------------------------------
 EProcMDS <- sEddyProc$new(
   'DE-Tha', EddyDataWithPosix, c('NEE', 'Rg', 'Tair', 'VPD'))
 #Initialize 'NEE' as variable to fill

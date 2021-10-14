@@ -8,7 +8,7 @@
     TempColName = "Tair", RgColName = "Rg", 
     ..., seasonFactor = usCreateSeasonFactorMonth(sDATA$sDateTime), 
     nSample = 200L, probs = c(0.05, 0.5, 
-        0.95), isVerbose = TRUE)}
+        0.95), isVerbose = TRUE, suppressWarningsAfterFirst = TRUE)}
 \arguments{
   \item{ctrlUstarEst}{control parameters
 for estimating uStar on a single binned series,
@@ -28,6 +28,8 @@ omitting night time data}
   \item{probs}{the quantiles of the bootstrap sample
 to return. Default is the 5\%, median and 95\% of the bootstrap}
   \item{isVerbose}{set to FALSE to omit printing progress}
+  \item{suppressWarningsAfterFirst}{set to FALSE to show also warnings
+for all bootstrap estimates instead of only the first bootstrap sample}
 }
 \details{The choice of the criterion for sufficiently turbulent conditions
 (u * > chosen threshold)
@@ -51,7 +53,7 @@ no quantiles (i.e. NA) are reported.
 \code{\link{sEddyProc_sGetEstimatedUstarThresholdDistribution}}}
 
 \author{TW
-Department for Biogeochemical Integration at MPI-BGC, Jena, Germany <REddyProc-help@bgc-jena.mpg.de> [cph], Thomas Wutzler <twutz@bgc-jena.mpg.de> [aut, cre], Markus Reichstein <mreichstein@bgc-jena.mpg.de> [aut], Antje Maria Moffat <antje.moffat@bgc.mpg.de> [aut, trl], Olaf Menzer <omenzer@bgc-jena.mpg.de> [ctb], Mirco Migliavacca <mmiglia@bgc-jena.mpg.de> [aut], Kerstin Sickel <ksickel@bgc-jena.mpg.de> [ctb, trl], Ladislav Šigut <sigut.l@czechglobe.cz> [ctb]}
+Department for Biogeochemical Integration at MPI-BGC, Jena, Germany <REddyProc-help@bgc-jena.mpg.de> [cph], Thomas Wutzler <twutz@bgc-jena.mpg.de> [aut, cre], Markus Reichstein <mreichstein@bgc-jena.mpg.de> [aut], Antje Maria Moffat <antje.moffat@bgc.mpg.de> [aut, trl], Olaf Menzer <omenzer@bgc-jena.mpg.de> [ctb], Mirco Migliavacca <mmiglia@bgc-jena.mpg.de> [aut], Kerstin Sickel <ksickel@bgc-jena.mpg.de> [ctb, trl], Ladislav <U+0160>igut <sigut.l@czechglobe.cz> [ctb]}
 
 
 

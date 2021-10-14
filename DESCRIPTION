@@ -1,6 +1,6 @@
 Package: REddyProc
 Type: Package
-Version: 1.2.2
+Version: 1.3.0
 Title: Post Processing of (Half-)Hourly Eddy-Covariance Measurements
 Authors@R: c( person( "Department for Biogeochemical Integration at MPI-BGC, Jena, Germany", role=c("cph"), email="REddyProc-help@bgc-jena.mpg.de" )
               ,person( "Thomas", "Wutzler", role=c("aut","cre"), email="twutz@bgc-jena.mpg.de" )
@@ -9,7 +9,7 @@ Authors@R: c( person( "Department for Biogeochemical Integration at MPI-BGC, Jen
               ,person( "Olaf", "Menzer", role=c("ctb"), email="omenzer@bgc-jena.mpg.de" )
               ,person( "Mirco", "Migliavacca", role=c("aut"), email="mmiglia@bgc-jena.mpg.de" )
               ,person( "Kerstin", "Sickel", role=c("ctb","trl"), email="ksickel@bgc-jena.mpg.de" )
-              ,person( "Ladislav", "Šigut", role=c("ctb"), email="sigut.l@czechglobe.cz" )
+              ,person( "Ladislav", "<U+0160>igut", role=c("ctb"), email="sigut.l@czechglobe.cz" )
               )
 Description: Standard and extensible Eddy-Covariance data post-processing 
   (Wutzler et al. (2018) <doi:10.5194/bg-15-5015-2018>)
@@ -35,13 +35,14 @@ URL: https://www.bgc-jena.mpg.de/bgi/index.php/Services/REddyProcWeb,
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 LinkingTo: Rcpp
 Depends: R (>= 3.0.0), methods
-Imports: dplyr, purrr, rlang, mlegp, tibble, magrittr, solartime
+Imports: Rcpp, dplyr, purrr, rlang, readr, mlegp, tibble, magrittr,
+        solartime, bigleaf (>= 0.7)
 Suggests: testthat, minpack.lm, segmented, knitr, rmarkdown, lognorm,
-        ggplot2, tidyr, bigleaf (>= 0.7)
+        ggplot2, tidyr, markdown
 Collate: 'CheckVal.R' 'DataFunctions.R' 'aEddy.R' 'EddyGapfilling.R'
         'EddyPartitioning.R' 'EddyPlotting.R'
         'EddyUStarFilterChangePointDetection.R' 'EddyUStarFilterDP.R'
@@ -49,10 +50,10 @@ Collate: 'CheckVal.R' 'DataFunctions.R' 'aEddy.R' 'EddyGapfilling.R'
         'GeoFunctions.R' 'LRC_base.R' 'LRC_logisticSigmoid.R'
         'LRC_nonrectangular.R' 'LRC_rectangular.R'
         'PartitioningLasslop10.R' 'PartitioningLasslop10Nighttime.R'
-        'RcppExports.R' 'imports.R' 'logitnorm.R' 'variableNames.R'
-        'zzzDebugCode.R'
+        'RcppExports.R' 'estimate_vpd_from_dew.R' 'imports.R'
+        'logitnorm.R' 'variableNames.R' 'zzzDebugCode.R'
 NeedsCompilation: yes
-Packaged: 2020-03-17 16:48:35 UTC; twutz
+Packaged: 2021-10-14 08:41:34 UTC; twutz
 Author: Department for Biogeochemical Integration at MPI-BGC, Jena, Germany
     [cph],
   Thomas Wutzler [aut, cre],
@@ -61,7 +62,7 @@ Author: Department for Biogeochemical Integration at MPI-BGC, Jena, Germany
   Olaf Menzer [ctb],
   Mirco Migliavacca [aut],
   Kerstin Sickel [ctb, trl],
-  Ladislav Šigut [ctb]
+  Ladislav <U+0160>igut [ctb]
 Maintainer: Thomas Wutzler <twutz@bgc-jena.mpg.de>
 Repository: CRAN
-Date/Publication: 2020-03-18 07:00:18 UTC
+Date/Publication: 2021-10-14 09:10:02 UTC
