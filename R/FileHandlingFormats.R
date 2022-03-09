@@ -259,5 +259,58 @@ extract_FN15 <- function(EProc = .self, is_export_nonfilled = TRUE, keep_other_c
   output
 }
 
+#' Read basic variables from Ameriflux standard (as of 2022) files
+#'
+#' Reads Variables from file into data.frame from file and passes 
+#' it to \code{\link{read_from_ameriflux22}}.
+#'
+#' @param file_path scalar string: the path to the csv file
+#' @param ... further arguments to \code{\link{read_csv}}
+#' 
+#' @return see \code{\link{read_from_ameriflux22}}
+#' 
+#' @export
+fLoadAmeriflux22 <- function(file_path, ...) {
+  col <- col_standard <- cols_only(
+    TIMESTAMP_END = col_character(),
+    FC = col_double(),
+    LE = col_double(),
+    H = col_double(),
+    SW_IN = col_double(),
+    TA = col_double(),
+    #TS = col_double(),
+    USTAR = col_double(),
+    #VPD = col_double()
+    RH = col_double()
+  )
+  df <- read_csv(file_path, col_types = col, na =  c("-9999","","NA"), comment="#", ...)
+  read_from_ameriflux22(df)  
+}
+
+#' Extract basic variables from Ameriflux standard (as of 2022) data.frames
+#'
+#' NEE is read from FC, Rg from SW_in, VPD is computed from RH and Tair.
+#' Non-storage corrected LE and H are read.
+#'
+#' @param df data.frame: with columns FC, SW_IN, RH, TA, USTAR, L and E
+#' 
+#' @return Data.Frame with columns 
+#'   DateTime, NEE,	Rg,	Tair,	rH,	VPD, Ustar, LE, H
+#' 
+#' @export
+read_from_ameriflux22 <- function(df){
+  ds_eproc <- df %>% mutate(
+    DateTime = BerkeleyJulianDateToPOSIXct(.data$TIMESTAMP_END),
+    RH = ifelse(between(.data$RH,100.0,105.0),100.0, .data$RH),
+    VPD = fCalcVPDfromRHandTair(.data$RH, .data$TA)
+  ) %>%
+    select(.data$DateTime, NEE = "FC",	Rg = "SW_IN",	Tair="TA",	rH="RH",	
+           .data$VPD, Ustar = "USTAR", .data$LE, .data$H )
+  varnames = names(ds_eproc)[-1] # all except DateTime  
+  units = REddyProc_defaultunits(varnames)  
+  ds_eproc <- ds_eproc %>%   
+    set_varunit_attributes(varnames, units)
+}
+
 
 
