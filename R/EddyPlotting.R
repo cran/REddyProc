@@ -137,10 +137,10 @@ sEddyProc$methods(.sxClosePlot = .sEddyProc_sxClosePlot)
 sEddyProc_sPlotFingerprintY <- function(
   ### Plot fingerprint for a single year scaled to all data.
   Var = Var.s               ##<< Variable to plot
-  , QFVar = 'none'     ##<<
-  ## Quality flag of variable to be filled
-  , QFValue = if (!missing(QFValue.n)) QFValue.n else NA_real_ ##<<
-  ## Value of quality flag for data to plot
+  , QFVar = 'none'          ##<< Quality
+  ##  flag of variable to be filled
+  , QFValue = if (!missing(QFValue.n)) QFValue.n else NA_real_ ##<< Value
+  ## of quality flag for data to plot
   , Year = Year.i             ##<< Year to plot
   , onlyLegend = if (!missing(Legend.b)) Legend.b else  F         ##<< Plot
   ## only legend
@@ -180,6 +180,11 @@ sEddyProc_sPlotFingerprintY <- function(
   Data.V.n <- fSetQF(data, Var, QFVar, QFValue, 'sPlotFingerprintY')
   # Scale to all data
   YMin.n <- min(Data.V.n, na.rm = T)
+  if (!is.finite(YMin.n)) {
+    # if no valid data, warn and return
+    warning(paste("No valid data to plot for year", Year))
+    return()
+  }
   YMax.n <- max(Data.V.n, na.rm = T)
   #Set yearly data
   FullYearData.F <- fExpandToFullYear(
@@ -190,6 +195,11 @@ sEddyProc_sPlotFingerprintY <- function(
   # set outliers to range limits in order to not distort colour scale
   Plot.V.n <- pmax(pmin(Plot.V.n, valueLimits[2]), valueLimits[1])
   YMin.n <- max(YMin.n, min(Plot.V.n, na.rm = T))
+  if (!is.finite(YMin.n)) {
+    # if no valid data, warn and return
+    warning(paste("No valid data to plot for year", Year))
+    return()
+  }
   YMax.n <- min(YMax.n, max(Plot.V.n, na.rm = T))
   # Calculate plot parameters
   XAxis.V.n <- seq(0, 24, by = 2)
@@ -256,8 +266,8 @@ sEddyProc_sPlotFingerprint <- function(
   , QFVar = 'none'     ##<< Quality flag of variable to be filled
   , QFValue = if (!missing(QFValue.n)) QFValue.n else NA_real_ ##<< Value of
   ## quality flag for data to plot
-  , Format = if (!missing(Format.s)) Format.s else 'pdf'     ##<<
-  ## Graphics file format (e.g. 'pdf', 'png')
+  , Format = if (!missing(Format.s)) Format.s else 'pdf'     ##<< Graphics
+  ## file format (e.g. 'pdf', 'png')
   , Dir = if (!missing(Dir.s)) Dir.s else 'plots'      ##<< Directory
   ## for plotting
   , ...				##<< further arguments to \code{\link{sEddyProc_sPlotFingerprintY}}
@@ -309,17 +319,17 @@ sEddyProc$methods(sPlotFingerprint = sEddyProc_sPlotFingerprint)
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #' @export
-.sEddyProc_sPlotDiurnalCycleM <- function(
-  ### The diurnal cycles of a single month are potted to the current device,
+sEddyProc_sPlotDiurnalCycleM <- function(
+  ### The diurnal cycles of a single month are plotted to the current device,
   ### scaled to all data. Each year is plotted as a different (coloured) line.
   Var = Var.s               ##<< Variable to plot
-  , QFVar = if (!missing(QFVar.s)) QFVar.s else 'none'     ##<<
-  ## Quality flag of variable to be filled
-  , QFValue = if (!missing(QFValue.n)) QFValue.n else NA_real_ ##<<
-  ## Value of quality flag for data to plot
+  , QFVar = if (!missing(QFVar.s)) QFVar.s else 'none'     ##<< Quality
+  ##  flag of variable to be filled
+  , QFValue = if (!missing(QFValue.n)) QFValue.n else NA_real_ ##<< Value
+  ##  of quality flag for data to plot
   , Month = Month.i            ##<< Month to plot
-  , Legend = if (!missing(Legend.b)) Legend.b else T         ##<<
-  ## Plot with legend
+  , Legend = if (!missing(Legend.b)) Legend.b else T         ##<< Plot
+  ##  with legend
   , data = cbind(sDATA, sTEMP)   ##<< data.frame with variables to plot
   , dts = sINFO$DTS              ##<< numeric integer
   , Var.s               ##<< Variable to plot
@@ -355,6 +365,12 @@ sEddyProc$methods(sPlotFingerprint = sEddyProc_sPlotFingerprint)
 
   # Scale to all data
   YMin.n <- min(Mean.F.m[, c(-1, -2)], na.rm = T)
+  if (!is.finite(YMin.n)) {
+    # if no valid data, warn and return
+    warning(paste("No valid data to plot for month", Month))
+    return()
+  }
+
   YMax.n <- max(Mean.F.m[, c(-1, -2)], na.rm = T)
   # Axis settings
   XAxis.V.n <- seq(0, 24, by = 2)
@@ -393,7 +409,7 @@ sEddyProc$methods(sPlotFingerprint = sEddyProc_sPlotFingerprint)
       , month.name[Month], '!')
   }
 }
-sEddyProc$methods(.sPlotDiurnalCycleM = .sEddyProc_sPlotDiurnalCycleM)
+sEddyProc$methods(.sPlotDiurnalCycleM = sEddyProc_sPlotDiurnalCycleM)
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -474,10 +490,10 @@ sEddyProc$methods(sPlotDiurnalCycle = sEddyProc_sPlotDiurnalCycle)
 sEddyProc_sPlotHHFluxesY <- function(
   ### Plot half-hourly fluxes for a single year scaled to all data.
   Var = Var.s               ##<< Variable to plot
-  , QFVar = if (!missing(QFVar.s)) QFVar.s else 'none'     ##<<
-  ## Quality flag of variable to be filled
-  , QFValue = if (!missing(QFValue.n)) QFValue.n else NA_real_ ##<<
-  ## Value of quality flag for data to plot
+  , QFVar = if (!missing(QFVar.s)) QFVar.s else 'none'     ##<< Quality
+  ##  flag of variable to be filled
+  , QFValue = if (!missing(QFValue.n)) QFValue.n else NA_real_ ##<< Value
+  ##  of quality flag for data to plot
   , Year = Year.i             ##<< Year to plot
   , data = cbind(sDATA, sTEMP)   ##<< data.frame with variables to plot
   , dts = sINFO$DTS              ##<< numeric integer
@@ -507,6 +523,11 @@ sEddyProc_sPlotHHFluxesY <- function(
     apply(matrix(Plot.V.n, nrow = dts), 2, mean, na.rm = T), each = dts)
   #Scale to all data
   YMin.n <- min(Plot.V.n, na.rm = T)
+  if (!is.finite(YMin.n)) {
+    # if no valid data, warn and return
+    warning(paste("No valid data to plot for year", Year))
+    return()
+  }
   YMax.n <- max(Plot.V.n, na.rm = T)
   # Axis settings
   Julian.i <- julian(Time.V.n, origin = as.POSIXct(
@@ -611,42 +632,19 @@ sEddyProc$methods(sPlotHHFluxes = sEddyProc_sPlotHHFluxes)
 
 #' @export
 sEddyProc_sPlotDailySumsY <- function(
-  ##title<<
-  ## sEddyProc$sPlotDailySumsY - Plot daily sum of specified year
-  ##description<<
-  ## The daily sums for a single year are plotted to the current device,
-  ## scaled to all data.
-  ## The daily sums are only calculated for days with complete data.
-  Var = Var.s               ##<< (Filled) variable to plot
+   Var               ##<< (Filled) variable to plot
   , VarUnc = 'none'    ##<< Uncertainty
   ## estimates for variable
-  , Year = Year.i             ##<< Year to plot
-  , timeFactor = if (!missing(timeFactor.n)) timeFactor.n else 3600 * 24	##<< time
+  , Year              ##<< Year to plot
+  , timeFactor = 3600 * 24	##<< time
   ## conversion factor with default per second to per day
-  , massFactor = if (!missing(massFactor.n)) massFactor.n else ##<< mass
+  , massFactor =  (44.0096 / 1e6) * (12.011 / 44.0096) ##<< mass
     ## conversion factor with default from mumol CO2 to g C
-    (44.0096 / 1000000) * (12.011 / 44.0096)
-  , unit = if (!missing(unit.s)) unit.s else 'gC/m2/day' ##<< unit
+  , unit = 'gC/m2/day' ##<< unit
   ##  of the daily sums
-  , data = cbind(sDATA, sTEMP)   ##<< data.frame with variables to plot
   , dts = sINFO$DTS              ##<< numeric integer
-  , Var.s   ##deprecated
-  , VarUnc.s   ##deprecated
-  , Year.i   ##deprecated
-  , timeFactor.n   ##deprecated
-  , massFactor.n    ##deprecated
-  , unit.s    ##deprecated
+  , data = cbind(sDATA, sTEMP)   ##<< data.frame with variables to plot
 ) {
-  if (!missing(VarUnc.s)) VarUnc <- VarUnc.s
-  varNamesDepr <- c("Var.s","VarUnc.s","Year.i","timeFactor.n","massFactor.n","unit.s")
-  varNamesNew <- c("Var","VarUnc","Year","timeFactor","massFactor","unit")
-  iDepr = which(!c(
-    missing(Var.s),missing(VarUnc.s),missing(Year.i),missing(timeFactor.n)
-    ,missing(massFactor.n),missing(unit.s)))
-  if (length(iDepr)) warning(
-    "Argument names ",paste(varNamesDepr[iDepr], collapse = ",")
-    ," have been deprecated."
-    ," Please, use instead ", paste(varNamesNew[iDepr], collapse = ","))
   ##author<< AMM, KS
   ##description<<
   ## This function first computes the average flux for each day.
@@ -680,23 +678,39 @@ sEddyProc_sPlotDailySumsY <- function(
   nRecInDay <- dts
   DYear.V.d <- matrix(as.numeric(format(Time.V.n, '%Y')), nrow = dts)[1, ]
   DoY.V.d  <- matrix(as.numeric(format(Time.V.n, '%j')) , nrow = dts)[1, ]
-  DAvg.V.d <- (1 / dts) * apply(matrix(Plot.V.n, nrow = nRecInDay), 2, mean)
-  DSum.V.d <- DAvg.V.d * timeFactor * massFactor
+  daily_sums = compute_daily_mean(Plot.V.n, PlotSD.V.n, nRecInDay, timeFactor, massFactor)
+  plotDailySumsY_(daily_sums$x, CountMissingUnc.n, DoY.V.d, Year, unit, VarUnc, daily_sums$x_sd,  month.abb, Var)
+}
+sEddyProc$methods(sPlotDailySumsY = sEddyProc_sPlotDailySumsY)
+
+compute_daily_mean <- function(x, x_sd, nRecInDay, timeFactor, massFactor) {
+  #twutz: 220507: removed (1/dts)
+  #DAvg.V.d <- (1 / dts) * apply(matrix(Plot.V.n, nrow = nRecInDay), 2, mean)
+  mx0 <- apply(matrix(x, nrow = nRecInDay), 2, mean)
+  mx <- mx0 * timeFactor * massFactor
   fSumOfSquares <- function(x, ...) {sum(x^2, ...)}
   #DUnc.V.d <- (1 / dts) * sqrt(
   # apply(matrix(PlotSD.V.n, nrow = dts), 2, fSumOfSquares))
   # twutz: 160729:  * timeFactor * massFactor
-  DUnc.V.d <- (1 / nRecInDay) * sqrt(
-    apply(matrix(PlotSD.V.n, nrow = nRecInDay), 2, fSumOfSquares)) *
-    timeFactor * massFactor
+  # twutz: 220507: if fully independent variances addd and 1/nRecInDay would be inside sqrt,
+  #   if fully dependen, sd_s add
+  # mx_sd0 <- sqrt(apply(matrix(x_sd, nrow = nRecInDay), 2, fSumOfSquares) / nRecInDay)
+  mx_sd0 <- apply(matrix(x_sd, nrow = nRecInDay), 2, mean) # assume fully dependent
+  mx_sd = mx_sd0 * timeFactor * massFactor
+  list(x = mx, x_sd = mx_sd)
+}
 
+plotDailySumsY_ <- function(DSum.V.d, CountMissingUnc.n, DoY.V.d, Year, unit, VarUnc, DUnc.V.d, month.abb, Var) {
   # Scale to all data
   YMin.n <- min(DSum.V.d - DUnc.V.d, na.rm = T)
+  if (!is.finite(YMin.n)) {
+    # if no valid data, warn and return
+    warning(paste("No valid data to plot for year", Year))
+    return()
+  }
   YMax.n <- max(DSum.V.d + DUnc.V.d, na.rm = T)
   # Axis settings
   XAxis.V.n <- seq(15, 345, by = 30)
-
-  # Plot daily sums
   par(mai = c(0.7, 0.7, 0.7, 0.4)) #Set margin
   if (!sum(!is.na(DSum.V.d)) == 0 && CountMissingUnc.n == 0) {
     # Plot
@@ -738,7 +752,6 @@ sEddyProc_sPlotDailySumsY <- function(
     }
   }
 }
-sEddyProc$methods(sPlotDailySumsY = sEddyProc_sPlotDailySumsY)
 
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -831,7 +844,7 @@ sEddyProc_sPlotNEEVersusUStarForSeason <- function(
   , HInchSingle = 6 * 0.394	##<< height of a subplot in inches, defaults to 6cm
   , ...						##<< other arguments to \code{.plotNEEVersusUStarTempClass},
   ## such as xlab and ylab axis label strings
-  , data = cbind(sDATA, sTEMP, sUSTAR_DETAILS$bins[,c("uStarBin","tempBin")]) ##<<
+  , data = cbind(sDATA, sTEMP, sUSTAR_DETAILS$bins[,c("uStarBin","tempBin")]) ##<< a
   ## data.frame with variables to plot
 ) {
   ##author<< TW

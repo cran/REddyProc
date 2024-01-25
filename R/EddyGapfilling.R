@@ -129,8 +129,9 @@ sEddyProc_sFillLUT <- function(
   , V5.s = 'none'          ##<< Condition variable 5
   , T5.n = NA_real_        ##<< Tolerance interval 5
   , Verbose.b = TRUE       ##<< Print status information to screen
+  , calculate_gapstats = calculate_gapstats_Reichstein05 ##<< function computing gap-statistics
 ) {
-  ##author<< AMM
+  ##author<< AMM, TW
   #! Attention: For performance reasons, gap filled values and properties are
   #first written to single variables and local matrix lGF.M
   #! (rather than changing single values in sTEMP which copies the data frame each time!)
@@ -167,10 +168,13 @@ sEddyProc_sFillLUT <- function(
       if (Start.i <= 0) Start.i <- 1
       if (End.i > nrow(sTEMP) ) End.i <- nrow(sTEMP)
 
-      #! Special treatment of Rg to be congruent with MR PV-Wave, in paper not mentioned
-      T1red.n <- if (grepl('Rg', V1.s) ) {
+      # Special treatment of Rg to be congruent with MR PV-Wave,
+      # not mentioned in paper
+      isV1Rg <- grepl('Rg', V1.s)
+      T1red.n <- if (isV1Rg) {
         # Reduce tolerance of radiation if variable name contains 'Rg' to
         # [20, 50] depending on measurement
+        # at least 20, if Rg>20 then min(Rg, tol=50), larger than 20 for 20<Rg<50
         max(min(T1.n, sDATA[Gap.i, V1.s], na.rm = T), 20, na.rm = T)
       } else {
         T1.n
@@ -199,12 +203,26 @@ sEddyProc_sFillLUT <- function(
         Rows.V.b <- Rows.V.b & abs(V5.V.n - V5.V.n[SubGap.i]) < T5.n  & !is.na(V5.V.n)
       lLUT.V.n <- subset(sTEMP$VAR_orig[Start.i:End.i], Rows.V.b)
 
+      # Here using <=, alternative could use strict <
+      #isV1belowT1 <- V1.V.n[Rows.V.b] < V1.V.n[SubGap.i]
+      # usually fewer values with lower Rg -> use <=
+      isV1belowT1 <- V1.V.n[Rows.V.b] <= V1.V.n[SubGap.i]
+
+      is_nighttime <- if (isV1Rg) {
+        # determine nighttime by radiation below 10W/m2 corresponding to uStar filter
+        sDATA[Gap.i, V1.s] < 10
+      } else {
+        # without radiation: assume daytime-record
+        FALSE
+      }
+
       # If enough available data, fill gap
       if (length(lLUT.V.n) > 1) {
         lVAR_index.i <- Gap.i
-        lVAR_mean.n <- mean(lLUT.V.n)
-        lVAR_fnum.n <- length(lLUT.V.n)
-        lVAR_fsd.n <- sd(lLUT.V.n)
+        gapstats <- calculate_gapstats(lLUT.V.n, isV1belowT1, is_nighttime)
+        lVAR_mean.n <- gapstats[1]
+        lVAR_fnum.n <- gapstats[2]
+        lVAR_fsd.n <- gapstats[3]
 
         #Set window size and quality flag
         ##details<< \describe{\item{Quality flags}{
@@ -264,6 +282,50 @@ sEddyProc_sFillLUT <- function(
   ## LUT filling results in sTEMP data frame.
 }
 sEddyProc$methods(sFillLUT = sEddyProc_sFillLUT)
+
+calculate_gapstats_Reichstein05 <- function(lLUT.V.n, ...) {
+  lVAR_mean.n <- mean(lLUT.V.n)
+  lVAR_fnum.n <- length(lLUT.V.n)
+  lVAR_fsd.n <- sd(lLUT.V.n)
+  c(lVAR_mean.n, lVAR_fnum.n, lVAR_fsd.n)
+}
+
+calculate_gapstats_Vekuri23 <- function(
+  ### Compute the gap statistic by separately aggregating reocrds lower or higher than the gap-covariate
+  lLUT.V.n, ##<< numeric vector of observations
+  islower,  ##<< logical vector indicating if the observation was lower than gaps covariate
+  is_nighttime, ##<< logical scalar indicating whether record to fill is nighttime
+  n_min=1   ##<< minimum number of observations in each group.
+  ## If there are fewer observations in on the groups
+  ## return the (skewness-biased) Reichstein05 estimate.
+  ) {
+  ##details<<
+  ## In order to reduce bias due to skewed distributions of covariate.
+  if (isTRUE(is_nighttime))
+    return(calculate_gapstats_Reichstein05(lLUT.V.n))
+  vals_lower <- lLUT.V.n[islower]
+  vals_higher <- lLUT.V.n[!islower]
+  if ((length(vals_lower) < n_min) || (length(vals_higher) < n_min))
+    return(calculate_gapstats_Reichstein05(lLUT.V.n))
+  mean_lower <- mean(vals_lower)
+  mean_higher <- mean(vals_higher)
+  lVAR_mean.n <- (mean_lower  + mean_higher)/2
+  lVAR_fnum.n <- length(lLUT.V.n)
+  lVAR_fsd.n <- sd(lLUT.V.n) # keep uncertainty of population instead of estimate
+  # ##details<<
+  # ## Error propagation assumes upper and lower aggregate to be uncorrelated.
+  # ## If uncertainty of one group could not be estimated, e.g. if it has only
+  # ## one observation, then the uncertainty of
+  # ## the mean across the two values is returned.
+  # var_lower <- var(vals_lower)
+  # var_higher <- var(vals_higher)
+  # lVAR_fsd.n <- if (!is.finite(var_lower) || !is.finite(var_higher)) {
+  #   sd(c(mean_lower, mean_higher))
+  # } else {
+  #   sqrt(var_lower + var_higher) / 2
+  # }
+  c(lVAR_mean.n, lVAR_fnum.n, lVAR_fsd.n)
+}
 
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -381,10 +443,10 @@ sEddyProc$methods(sFillMDC = sEddyProc_sFillMDC)
 sEddyProc_sMDSGapFill <- function(
   ### MDS gap filling algorithm adapted after the PV-Wave code and paper by Markus Reichstein.
   Var = Var.s                 ##<< Variable to be filled
-  , QFVar = if (!missing(QFVar.s)) QFVar.s else 'none'       ##<<
-  ## Quality flag of variable to be filled
-  , QFValue = if (!missing(QFValue.n)) QFValue.n else NA_real_   ##<<
-  ## Value of quality flag for _good_ (original) data, other data is set to missing
+  , QFVar = if (!missing(QFVar.s)) QFVar.s else 'none'       ##<< Quality flag
+  ##  of variable to be filled
+  , QFValue = if (!missing(QFValue.n)) QFValue.n else NA_real_   ##<< Value of
+  ##  quality flag for _good_ (original) data, other data is set to missing
   , V1 = if (!missing(V1.s)) V1.s else 'Rg'            ##<< Condition variable 1
   ## (default: Global radiation 'Rg' in  W m-2)
   , T1 = if (!missing(T1.n)) T1.n else 50              ##<< Tolerance interval 1
@@ -424,6 +486,8 @@ sEddyProc_sMDSGapFill <- function(
   , Suffix.s ##<< deprecated
   #! , QF.V.b = TRUE        ##<< boolean vector of length nRow(sData),
   ## to allow specifying bad data directly (those entries that are set to FALSE)
+  , method = "Reichstein05" ##<< specify "Vekuri23" to use the skewness-bias
+  ## reducing variant
 ) {
   varNamesDepr <- c(
     "Var.s","QFVar.s","QFValue.n","V1.s","T1.n"
@@ -496,6 +560,20 @@ sEddyProc_sMDSGapFill <- function(
   ## and Mean Diurnal Course \code{\link{sEddyProc_sFillMDC}} with different
   ## window sizes as described in the reference.
   ##details<<
+  ## Vekari et al. 2023 proposed a modification that reduces bias
+  ## that results from skewed distribution of radiation Rg.
+  ## In order to use this modification, specify \code{method="Vekuri23"}.
+  ##details<<
+  calculate_gapstats <- if (method == "Reichstein05") {
+    calculate_gapstats_Reichstein05
+  } else if (method == "Vekuri23") {
+    if (V1 != "Rg") warning(paste0(
+      "Method Vekuri23 requires incoming shortware radiation (Rg), ",
+      "but first covariate is called ", V1))
+    calculate_gapstats_Vekuri23
+  } else
+    stop(paste0(
+      "unknown MDS method '",method,"'. Specify 'Reichstein05' or 'Vekuri23'"))
   ## To run dataset only with MDC algorithm \code{\link{sEddyProc_sFillMDC}},
   ## set condition variable V1 to 'none'.
   # Check availablility of meteorological data for LUT
@@ -529,11 +607,17 @@ sEddyProc_sMDSGapFill <- function(
     }
   #+++ Full MDS algorithm
   # Step 1: Look-up table (method 1) with window size +-7 days
-  if (Met.n == 3) sFillLUT(7, V1, T1, V2, T2, V3, T3, Verbose.b = isVerbose)
+  if (Met.n == 3) sFillLUT(
+    7, V1, T1, V2, T2, V3, T3, Verbose.b = isVerbose,
+    calculate_gapstats = calculate_gapstats)
   # Step 2: Look-up table (method 1) with window size +-14 days
-  if (Met.n == 3) sFillLUT(14, V1, T1, V2, T2, V3, T3, Verbose.b = isVerbose)
+  if (Met.n == 3) sFillLUT(
+    14, V1, T1, V2, T2, V3, T3, Verbose.b = isVerbose,
+    calculate_gapstats = calculate_gapstats)
   # Step 3: Look-up table, Rg only (method 2) with window size +-7 days,
-  if (Met.n == 3 || Met.n == 1) sFillLUT(7, V1, T1, Verbose.b = isVerbose)
+  if (Met.n == 3 || Met.n == 1) sFillLUT(
+    7, V1, T1, Verbose.b = isVerbose,
+    calculate_gapstats = calculate_gapstats)
   # Step 4: Mean diurnal course (method 3) with window size 0 (same day)
   sFillMDC(0, Verbose.b = isVerbose)
   # Step 5: Mean diurnal course (method 3) with window size +-1, +-2 days
@@ -541,10 +625,12 @@ sEddyProc_sMDSGapFill <- function(
   sFillMDC(2, Verbose.b = isVerbose)
   # Step 6: Look-up table (method 1) with window size +-21, +-28, ..., +-70
   if (Met.n == 3) for (WinDays.i in seq(21, 70, 7) ) sFillLUT(
-    WinDays.i, V1, T1, V2, T2, V3, T3, Verbose.b = isVerbose)
+    WinDays.i, V1, T1, V2, T2, V3, T3, Verbose.b = isVerbose,
+    calculate_gapstats = calculate_gapstats)
   # Step 7: Look-up table (method 2) with window size +-14, +-21, ..., +-70
   if (Met.n == 3 || Met.n == 1) for (WinDays.i in seq(14, 70, 7) ) sFillLUT(
-    WinDays.i, V1, T1, Verbose.b = isVerbose)
+    WinDays.i, V1, T1, Verbose.b = isVerbose,
+    calculate_gapstats = calculate_gapstats)
   # Step 8: Mean diurnal course (method 3) with window size +-7, +-14, ..., +-210 days
   for (WinDays.i in seq(7, 210, 7) ) sFillMDC(WinDays.i, Verbose.b = isVerbose)
 

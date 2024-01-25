@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 # do not execute on CRAN: 
 # https://stackoverflow.com/questions/28961431/computationally-heavy-r-vignettes
 is_check <- ("CheckExEnv" %in% search()) || any(c("_R_CHECK_TIMINGS_",

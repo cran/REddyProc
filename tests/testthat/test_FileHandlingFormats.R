@@ -7,6 +7,26 @@
 }
 context("FileHandlingFormats")
 
+test_that("fSplitDateTime",{
+  ds0 <- Example_DETha98[-nrow(Example_DETha98),]
+  ds_t <- ds0 %>%
+    fConvertTimeToPosix('YDH',Year = 'Year',Day = 'DoY', Hour = 'Hour') %>%
+    select(-one_of(c('Year', 'DoY', 'Hour')))
+  ds_ydh <- fSplitDateTime(ds_t)
+  expect_equivalent(ds_ydh, ds0)
+})
+
+test_that("fWriteDataframeToFile",{
+  fname = tempfile()
+  ds0 <- Example_DETha98[-nrow(Example_DETha98),]
+  ds_t <- ds0 %>%
+    fConvertTimeToPosix('YDH',Year = 'Year',Day = 'DoY', Hour = 'Hour') %>%
+    select(-one_of(c('Year', 'DoY', 'Hour')))
+  fWriteDataframeToFile(ds_t, fname, isSplitDatetime=TRUE)
+  ds_in <- fLoadTXTIntoDataframe(fname)
+  expect_equivalent(ds_in, ds0)
+})
+
 test_that("extract_FN15",{
   ds <- Example_DETha98 %>%
     filterLongRuns("NEE") %>%
@@ -84,8 +104,8 @@ test_that("read_from_ameriflux22",{
   ds <- Example_DETha98 %>%
     filterLongRuns("NEE") %>%
     fConvertTimeToPosix('YDH', Year = 'Year', Day = 'DoY', Hour = 'Hour')
-  ds_af22 <- ds %>% 
-    mutate(TIMESTAMP_END= POSIXctToBerkeleyJulianDate(.data$DateTime)) %>% 
+  ds_af22 <- ds %>%
+    mutate(TIMESTAMP_END= POSIXctToBerkeleyJulianDate(.data$DateTime)) %>%
     select(TIMESTAMP_END, FC = "NEE",	SW_IN = "Rg",	TA = "Tair",	RH = "rH",	USTAR="Ustar", LE, H )
   ds2 = read_from_ameriflux22(ds_af22)
   varsequal = c("NEE","Rg","Tair","rH","Ustar","LE","H")
@@ -102,3 +122,19 @@ test_that("read_from_ameriflux22",{
   expect_equal(ds2$VPD[is.finite(ds2$VPD)], ds$VPD[is.finite(ds2$VPD)], tolerance=0.2)
 })
 
+test_that("fWriteFrench23",{
+  fname = tempfile()
+  data = EddyDataWithPosix <- suppressMessages(fConvertTimeToPosix(
+    Example_DETha98, 'YDH', Year = 'Year', Day = 'DoY', Hour = 'Hour'))
+  fWriteFrench23(data, fname)
+  header <- read_lines(fname, n_max=2)
+  .tmp.f <- function(){
+    header <- read_lines(fname, n_max=6)
+    write_lines(header, "~/tmp/REddyProcExample.csv")
+  }
+  expect_equal(header[1], "DateTime,Year,DoY,Hour,NEE,LE,H,Rg,Tair,Tsoil,rH,VPD,Ustar")
+  expect_equal(header[2], "POSIXDate_Time,-,-,-,umolm-2s-1,Wm-2,Wm-2,Wm-2,degC,degC,percent,hPa,ms-1")
+  ds_in <- read_csv(fname, skip = 2, na=c("-9999","-9999.0"))
+  attr(ds_in$DateTime, "tzone") <- attr(data$DateTime, "tzone") # from UTC to GMT
+  expect_equivalent(ds_in, data)
+})

@@ -20,7 +20,7 @@ knit_hooks$set(spar = function(before, options, envir) {
      }
 })
 
-## ---- include = FALSE, warning = FALSE----------------------------------------
+## ----include = FALSE, warning = FALSE-----------------------------------------
 #themeTw <- theme_bw(base_size = 10) + theme(axis.title = element_text(size = 9))
 bgiDir <- "~/bgi"
 

@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 # do not execute on CRAN: 
 # https://stackoverflow.com/questions/28961431/computationally-heavy-r-vignettes
 is_check <- ("CheckExEnv" %in% search()) || any(c("_R_CHECK_TIMINGS_",
@@ -27,7 +27,7 @@ knit_hooks$set(spar = function(before, options, envir) {
      }
 })
 
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 #themeTw <- theme_bw(base_size = 10) + theme(axis.title = element_text(size = 9))
 
 ## ----init, message = FALSE, output = 'hide'-----------------------------------

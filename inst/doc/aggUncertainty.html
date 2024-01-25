@@ -14,25 +14,38 @@
 
 <title>Uncertainty aggregation</title>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
-  code{white-space: pre-wrap;}
-  span.smallcaps{font-variant: small-caps;}
-  span.underline{text-decoration: underline;}
-  div.column{display: inline-block; vertical-align: top; width: 50%;}
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  ul.task-list{list-style: none;}
-    </style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
 
 
 <style type="text/css">
-  code {
-    white-space: pre;
-  }
-  .sourceCode {
-    overflow: visible;
-  }
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
@@ -50,55 +63,54 @@ pre > code.sourceCode { white-space: pre-wrap; }
 pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
-  { counter-reset: source-line 0; }
+{ counter-reset: source-line 0; }
 pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
+{ position: relative; left: -4em; counter-increment: source-line; }
 pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
 div.sourceCode
-  {   }
+{ }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -107,13 +119,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -125,7 +144,187 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -145,125 +344,188 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1>Aggregating uncertainty to daily and annual values</h1>
 <div id="example-setup" class="section level2">
 <h2>Example setup</h2>
-<p>We start with half-hourly <span class="math inline">\(u_*\)</span>-filtered and gapfilled NEE_f values. For simplicity this example uses data provided with the package and omits <span class="math inline">\(u_*\)</span> threshold detection but rather applies a user-specified threshold.</p>
-<p>With option <code>FillAll = TRUE</code>, an uncertainty, specifically the standard deviation, of the flux is estimated for each record during gapfilling and stored in variable <code>NEE_uStar_fsd</code>.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(REddyProc)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>EddyDataWithPosix <span class="ot">&lt;-</span> Example_DETha98 <span class="sc">%&gt;%</span> </span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filterLongRuns</span>(<span class="st">&quot;NEE&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fConvertTimeToPosix</span>(<span class="st">&#39;YDH&#39;</span>,<span class="at">Year =</span> <span class="st">&#39;Year&#39;</span>,<span class="at">Day =</span> <span class="st">&#39;DoY&#39;</span>, <span class="at">Hour =</span> <span class="st">&#39;Hour&#39;</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>EProc <span class="ot">&lt;-</span> sEddyProc<span class="sc">$</span><span class="fu">new</span>(</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">&#39;DE-Tha&#39;</span>, EddyDataWithPosix, <span class="fu">c</span>(<span class="st">&#39;NEE&#39;</span>,<span class="st">&#39;Rg&#39;</span>,<span class="st">&#39;Tair&#39;</span>,<span class="st">&#39;VPD&#39;</span>, <span class="st">&#39;Ustar&#39;</span>))</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>EProc<span class="sc">$</span><span class="fu">sMDSGapFillAfterUstar</span>(<span class="st">&#39;NEE&#39;</span>, <span class="at">uStarTh =</span> <span class="fl">0.3</span>, <span class="at">FillAll =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> EProc<span class="sc">$</span><span class="fu">sExportResults</span>() </span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>results_good <span class="ot">&lt;-</span> results <span class="sc">%&gt;%</span> <span class="fu">filter</span>(NEE_uStar_fqc <span class="sc">&lt;=</span> <span class="dv">1</span>) </span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(results_good<span class="sc">$</span>NEE_uStar_fsd)</span></code></pre></div>
+<p>We start with half-hourly <span class="math inline">\(u_*\)</span>-filtered and gapfilled NEE_f values.
+For simplicity this example uses data provided with the package and
+omits <span class="math inline">\(u_*\)</span> threshold detection but
+rather applies a user-specified threshold.</p>
+<p>With option <code>FillAll = TRUE</code>, an uncertainty, specifically
+the standard deviation, of the flux is estimated for each record during
+gapfilling and stored in variable <code>NEE_uStar_fsd</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(REddyProc)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>EddyDataWithPosix <span class="ot">&lt;-</span> Example_DETha98 <span class="sc">%&gt;%</span> </span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  <span class="fu">filterLongRuns</span>(<span class="st">&quot;NEE&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>  <span class="fu">fConvertTimeToPosix</span>(<span class="st">&#39;YDH&#39;</span>,<span class="at">Year =</span> <span class="st">&#39;Year&#39;</span>,<span class="at">Day =</span> <span class="st">&#39;DoY&#39;</span>, <span class="at">Hour =</span> <span class="st">&#39;Hour&#39;</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>EProc <span class="ot">&lt;-</span> sEddyProc<span class="sc">$</span><span class="fu">new</span>(</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>  <span class="st">&#39;DE-Tha&#39;</span>, EddyDataWithPosix, <span class="fu">c</span>(<span class="st">&#39;NEE&#39;</span>,<span class="st">&#39;Rg&#39;</span>,<span class="st">&#39;Tair&#39;</span>,<span class="st">&#39;VPD&#39;</span>, <span class="st">&#39;Ustar&#39;</span>))</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>EProc<span class="sc">$</span><span class="fu">sMDSGapFillAfterUstar</span>(<span class="st">&#39;NEE&#39;</span>, <span class="at">uStarTh =</span> <span class="fl">0.3</span>, <span class="at">FillAll =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>results <span class="ot">&lt;-</span> EProc<span class="sc">$</span><span class="fu">sExportResults</span>() </span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>results_good <span class="ot">&lt;-</span> results <span class="sc">%&gt;%</span> <span class="fu">filter</span>(NEE_uStar_fqc <span class="sc">&lt;=</span> <span class="dv">1</span>) </span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="fu">summary</span>(results_good<span class="sc">$</span>NEE_uStar_fsd)</span></code></pre></div>
 <pre><code>##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
 ##  0.03535  1.69194  2.31331  2.70544  3.39922 17.19675</code></pre>
-<p>We can inspect, how the uncertainty scales with the flux magnitude.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>results_good <span class="sc">%&gt;%</span> <span class="fu">slice</span>(<span class="fu">sample.int</span>(<span class="fu">nrow</span>(results_good),<span class="dv">400</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>( NEE_uStar_fsd <span class="sc">~</span> NEE_uStar_fall, <span class="at">data =</span> . )</span></code></pre></div>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAADAFBMVEUAAAABAQECAgIDAwMEBAQFBQUGBgYHBwcICAgJCQkKCgoLCwsMDAwNDQ0ODg4PDw8QEBARERESEhITExMUFBQVFRUWFhYXFxcYGBgZGRkaGhobGxscHBwdHR0eHh4fHx8gICAhISEiIiIjIyMkJCQlJSUmJiYnJycoKCgpKSkqKiorKyssLCwtLS0uLi4vLy8wMDAxMTEyMjIzMzM0NDQ1NTU2NjY3Nzc4ODg5OTk6Ojo7Ozs8PDw9PT0+Pj4/Pz9AQEBBQUFCQkJDQ0NERERFRUVGRkZHR0dISEhJSUlKSkpLS0tMTExNTU1OTk5PT09QUFBRUVFSUlJTU1NUVFRVVVVWVlZXV1dYWFhZWVlaWlpbW1tcXFxdXV1eXl5fX19gYGBhYWFiYmJjY2NkZGRlZWVmZmZnZ2doaGhpaWlqampra2tsbGxtbW1ubm5vb29wcHBxcXFycnJzc3N0dHR1dXV2dnZ3d3d4eHh5eXl6enp7e3t8fHx9fX1+fn5/f3+AgICBgYGCgoKDg4OEhISFhYWGhoaHh4eIiIiJiYmKioqLi4uMjIyNjY2Ojo6Pj4+QkJCRkZGSkpKTk5OUlJSVlZWWlpaXl5eYmJiZmZmampqbm5ucnJydnZ2enp6fn5+goKChoaGioqKjo6OkpKSlpaWmpqanp6eoqKipqamqqqqrq6usrKytra2urq6vr6+wsLCxsbGysrKzs7O0tLS1tbW2tra3t7e4uLi5ubm6urq7u7u8vLy9vb2+vr6/v7/AwMDBwcHCwsLDw8PExMTFxcXGxsbHx8fIyMjJycnKysrLy8vMzMzNzc3Ozs7Pz8/Q0NDR0dHS0tLT09PU1NTV1dXW1tbX19fY2NjZ2dna2trb29vc3Nzd3d3e3t7f39/g4ODh4eHi4uLj4+Pk5OTl5eXm5ubn5+fo6Ojp6enq6urr6+vs7Ozt7e3u7u7v7+/w8PDx8fHy8vLz8/P09PT19fX29vb39/f4+Pj5+fn6+vr7+/v8/Pz9/f3+/v7////isF19AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAgAElEQVR4nO2dB1zUVgPAk9sbjlsceyNT9nKCiqCoiCguEDfyqbVuK1pH69Y66667WsSJuK1aa6t11b1H1brKcFQQGe97yR1L7+7dcSBV8//9SHLJe0nuT/JWXt5hgEInWF2fwH8dShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShACShCCGhY01N9o/Nzd/YzfC4qGT+pGUMiq00bylZmjk9loY/eCxPm8QYKklTBO0O9GRQdgSf2rAFz1+d7I3SDxNkzQkiVL5gosh8wZ62q9y6jjGi3I5hwxPW9VauR+UBgoCJLS5A2cFkf1N+q4xgp6bqKam+UYtx8khguyzCBn2y2qc7jcMoKMFJTPLSJmRfx/jdsPkmoImkvO5ttU42iHxWXg86sRvTINNxDTjQ2M3A0SwwX1NcmE010mxt1iguVGRQfgtHzqjZvT5KeM3A0SwwW9aoqZeZphEcZd20YLAneTnZ2S7xi7FySGCwLg52lDZv5i5HGNF/SBqI4gyLU9RuYen7Cg+y2Ggy10TPqnUcf9hAXFWmwHPi3vtIjRGbz4TgE5L9BSlfmEBZktA4+wA+BHmY7AReO4GHdkMVxaraUO9wkLMt0EfuAUgEyBjsAzGMMyvmT0BJ+loMiwg17twL+tA3QEdhkDJ+uxHZ+loD8VmOgscGFl6gjMzyKm3e0LPjtB99+Ce/+ehll8+g1dgQOHEtOn8v99doL4xwGmRxPbfGzwfljnz6InjfrMBLW2ao41aq5CV+jJIuwWnGVaYJ+ZoLsjU7CkFBU6gxfeJlqNQNGhJZXXvjpQBndpNU62LjA8kY7KLV932tCj/dG8DPosQ+PWEdWsi6nwqf5xP9VbrCqUoEoYJGjH8Ao0h/jMBR0IwjhOajSH+MwFgeJGDXXv7nMXBBZSgoBOQQ92697dZy8Ixacr6O29gvJ1lKBKlAl6I95Svi6r+sf9dAWBYe1qor/AJyzop4D6o+bMhRh13E9YkHkZRh33ExZkDPemlcFeUBP7+wBUW1D2+Goc7faoMljG9u74UBguqHTDSKIO2srMqON+wrfYRMyVaRGi5K816rifsCD7IWB5K5AfZFwfxU9YEDsTnLUEYHuwUcf9hAU5zgYv8WfgF12PntHUmaCctZM2vCj/dLObo3PyPV3hDRc0WLwEeKfe6liveieopq4EbTVPGBdnuVf96bh89q0bU+TndEQwXNCLuA7gGBNjplf7JAnqSNBtGdGt6TfZY9XHgK3EdE2EjhiGC3pOVMVy999+oSMwmjoSNJl8Jg56q4qpz4UlxKyQ81Z7DMMFqR89nxJV5wTLqSNB/VTPK2cNI2dP5aq1PB0dUg0UdCo2FouKJfCwR8cpuan1X1Mm6M3W6euf6XkKNUBaGjkbPJOclSovE7OTzjpiGCjoXPfuWIfuBD0P6wq9Kz5mFVgqwTjfaGkbUQs66dRyZGeFcWVOQ/jT4m84vS2/rfq4wPcaAOfd1+iIYfgtFqJH/9Z0LLAVM1UweU8ac6XmECpBryx3wuk1pa5spGaZaz52zUj5irKP38s93ZSrdEWondq87wAAFmNT4dIYX80hVILSVT1Bp35hyM6N49rXSZMqdT9/e/FKkc7whgoqWLEbHiTKut0FXYF5WQD8g/0Kl/bwK68/07EMBtl5YabqueuOtnqeRB1goKAX3tgY8MZOlOzO02XIeToAJ7DVcGlelfLk84x0NVyyW8zqLuTqhX0NPm9tPB3dIm6+jlzbYAwUNNQcFrQ2YQdBYXA3HYGncoZMtAy02J+9QzJWcwjVLfZUeglOn7se0Lqn16cvFOp5hgS/K4bv3xLrjUgm31zK1R2gEgYKcoSXBkgmssX5Wh66kxSlWchS3vbBMKz1a80h1LlYunz4+inWo7Xtp2SqxN9LqSuTeQe3HcR04GBdYV4O4nuIwy/ruUcDBbGJJz3Wg+BkExcd5+rak9o2lZWDHkzoNlL7K00Tw7bdLjnv+pOe5whu2pKzGzrLaC175oGSpcpH+u3SQEEWm2ASjW2HS7M+QGX1GVsUau99/LDeDyhPqTpvl72vqZHf6xFvAIAvv9Jvl4Z24owuBaOYefDiD+2oZ0TN6CWosegVKJou2sAqqbL6+IwpB8s/FFZOkXNMyTv6UMD09u2nw8UnEzqmvNuwt1jVuXJ3tH4naqCg3xiBEXhnAI524pzVM6JmKgkqL2uX7p+2oHLeeNZWAU57+dWX0SrfqQUdXUaMrt/iOfnhUCCP1/B4xcbE5HwA7teT9di6Ncn+7n7Fl+nfe8dXLeis7EHOtrTT70QNLQcdiXZJygXFmMS41o5yQbc6mnFDVD1BnjbyHzXQOrW4PMzaRPeflJvBMYcQ839KVneNGUtWk4d3gtdMcWoSsbzFZldRYbqy4np61d0qIUbmThayZrSxOAZnRRGLYXkwffx36mT5pjnpNn6efidazZL0pTd6RtOGWtA1xZycgizHZcRyq6/gtfQqfE55mM3tjwj9r5/vxL7Rc2ajiA2Zw+VH4VrZX8S2lyKiD4UTURYFmYGVdnx9Y+ZDXj6x9JqjeuM3qwW46hY5cYjFKFWIYX4Hn19K8snX70Q/7IPDCtSCEr4jptelsKzzREKmJn94lYd5Ivk7OcDF2/lrsCiwK7Fiv30xeMNWbbS9BxNxCblYzKlaVMpRP5ESqO6icz4lnkSNMM+XfFEalG4KNnFL0/eVW8MFxZShZ0TNqAVZkpcD8DlTngO9EFYEmukY/78TCb6vwQTFH+QKLxhOTLYG5gvhN3ymGh6jmF31ei6Rknu9J3YnP66LO+VBLmxvWY0TNVxQMkGsnDawGkerQC3I/G9yFgC//31zMq+66FIp1KEwht+UgtLDMvFV8nPEPgAG9CNS9bEdiM8O5PAEu999MystGiYzeVHj/GfBoH857t0WS66+4laNE63uLfZvZKDmcHqiFtSGbA15KCZy57BFcFLSseoj7a8cl250YnmIpZkAbPXEedGXXjQJmTk3wo9MsNNt95UUb7PY/87OiwYpExKUg4vuhvgNTpAteDHP5g9CalazapxotdOgI5hRDYFqQacU6aXggv8UYvmGU9zS2b6tiMTzzdR6XI+5ZPZ8NJEXeAhstpNeXujaMfr1UvmF0m3Dvtiozuv2+gj4wUer7Pn19/1G7L+zaRPRplH687yNjzMsm4msGt0B+WFa2qZ0Um1Bq7nV6Ed1pGJoiumqNSdChArL5aWgdOfYtOm92g8li3Ul4e0v5J+ObE+G2EPmRd/xHdg2MdmwnBdXdZevC6p+Pmfdeel0j/iK4uMZ5TlwxsbHcoJ9/6rlTf0wXNB6kgnKptU4Wmn54CZ84go6NmP2CfCKuFmehYYmCpksjvI3ItjmUOKrFHmR5Zv5RM0PFHTlsTrchAuPdPZLutqKxrFfXloUPbN8Vd/ZcAKvvKTqDadiuCAOCS/karWOVwa8xV61cRsx1KkjWR7pMOqiRDKmZVIk4zR41o/DcJhfBLLclB1gyrMWFtyLpvC5plbT5LCq/FiuY683FOMdwdmgceB4Rbod/jM561fN96+MKgcZ/DpUBVBQ394wkSlMIJ5UvRTlD3JcCe4p39o43HMa0WPR+YhegzwSkn/0TAWPpXcKGzq0qd8dN5VwToLluqoIydMPRcDLUZzz0LJ8XdwmchZbzaJ/3fWTLhSRzVoPJTAtu+UIIlmwMEO3leJct9fL2oPXUqun7p2W3XA6BpYp40Is3aIVnrT+ltIv5ANduZ4LtLQju126aQ3vzmYHDlYMm7Om0VuQsyiRf/ry9lOGtL2pqTtBj5SwLJf1R4HwJXkFdeDCXJv+e4IwomFivlMYn05jiMb3ksf0fQIu2nnwljU0jbXkYAyOX/zF/D+ax2veq/tF0HAavKu2B5c/twAl8f7DzPyETViSdn4uRzXH00HdCSoQPOisbBVgzSMS5A6jf2SdK7KKvm2miMmQPmgoxOkYk//0TSouUvj93mJ/5HI8E3TyxHGGK5F5vnU7AkD2+9dD72/B/YCwIWzzYZWz2NWcoMFX3MdZ/w72ysseaLxX0/hl0ca/NZ1oHb6K0NF+MMyiO/GIWsTT4AYWTCVnmNx+zqT+kdMU0Y/48jd2YUntXczEfHbrr/dI6K/OMtwThrJMyQbYsROXWEp4zSo1juT/eR+AywJ7l7ghypgrVY61OqH05BDPlzNgdjiaGPEAvJ1txRf1qGhSvLT0G1/v1M5yTa+J1qGgw6xmi+Y3DpnRPQ8Wb0q2jfZh0iXiGaU5NlZ9BEfaeAlXLWHKR9C8cvMS2KaZMXRXHr3vk/G0NHOijDipYehFULRSUWYif7iovlX9/V5tG/PYjN7vlNCmDGjgEWBjORKWoFSVjqTIqyBvrH2eanNRilWcTNL2JXhYb9v7J1qHgtLj16cO+qlkEdfEzHEzse5lmHWT6GEbtnGYmGTyqsggJZ3Pj+8Hy34OLh4SLo4PbwRTJqmMqFiE8P8hYszprt5dl05Q8jYBLFqW5N+QlHc8yV83du4N8INobunSnqeFXQFYSTQjXbAmC5d9vlEFmuQidmcpw3sAkBH1/onWoaDd5Jv3u0zYIr6H9WpYv2gRKmY5cB1pnm74otJs2anGjACuEyzFHA8WrDLl9MAxngBvzmSIF7wa5NoEqljXK0qqali8qSTr83atyE/N9qqTmFPWNlJT7tBZ9BnZd+VnTOLB29DRTeTuUWRjG9jZWnUqpv5/7YreaMH5N/tUWUW5pKKxqHYFbddaX4OCXkiJsqYtdwAo3iKVlYJZbW/IBgSZ002Eu+XsZsUruXw3Dj4BBhk4xkR66Qe5wFeKDwf7MB6D22dHY/CqYdOV35lYkC2/W1S1EldVdb1NGwlfPvZf8EZpMvX6jaG4wIrNiQ+jRwRtCfGo920TGZ99nwiWqdJ5BnMKaML09caEZgLeHnBr8aSFMVwGN3T3hxCEHdS2haisrlUuOJuJeRP/rQzW36DxgQkj0i2DaVLbaY8saTSxo1lCS+a07GuDHPebQwF3xWw7K3DS033bF0PBC/Hfo3oA8G2vTd7E3rKaL+obH9/XzY748C+r02PwV4L/qmkm6+HHcD9hh7zJJilbwsSxiyXfOGx+tJVJDE+5V8Gy7PEQ7JTRjnwvoG9cjjVKbt3fJlHRfyBLYLFoqa2kfY7RgrS+DrW1uwqsWffumkOQtfnzib4NMfJuKMCjzZmRHUZbnZspULB5F4p6OyQugrfNGK6Jy9B9Tr0GwDA+q6Q0M8cNzfZtgInJNC+r8y9mmd8BtkQF7RjNz0pq7mdJg3fqy0ZEZeSCFU6nYV/DjM3uKE1yA/zY9m3YBrA12ozosdmcnQJmmykePJyovG25k9ffLdCSwaR9R29WOIHzDPQaYuJSfCWMxhEkPDZYUBrxqHgvUb08omv8oCwe5h8CwdxCQiqvL75dBl/daH+XTVYBpmNLHkd15zkuvSzkZCUJJHt3qhsstzoqzB0y9hBvwA4c09EpBzw0y5tANC5vonNF8bcBCIXV2xIZhyWza2ol+x/bI1TsASuqOWy2c2wnjDYMbHIQYELB5FVK34QSsLGx5+AvM0p/UTBFeCxR7JkUV+83BZPeRoZhsIzFhpdsIXAfMchvt+XS8JT/jfYtMlQQllE22a6zkfqaf9B18P4tdtShDJq6uaNEJln54vVPdAcADtgNxfe1DjC5JW893jltZFmcJ/DfWOgMff6t4Jsc2+8+47Y5WfwJIB/oF0rgfyuNk+0QrJTY+QC5jakVU8Cw9xb0mvxVPp3FfeAiczAd7yzzkxFZ+DGGbN6cBg3SOnnvU/3jrsnZziY4RtKA+cMENvMtcE+Z1KVLXxAxKhE02FlbgsDbUYLFqDSIZINFgEjojLe2V7YZr8DYuJuIOydir0Ryu0rwq35Bqe3kTcS4JKmvSZfNROqwLBDm9EWDieTZ0R8onuTNZAkWs+aUtnYXfjOLjrnabgcjcbqdJZ0tHpzCZHgTHVo7OLPbcXCcNqjHkcbkfo/geEscCmLScS6D3QOIFQD07NQurNn6p+L+34C0ybUmCB7bOvqxHoLAvgCeIIA25c6jH8w3MNxoQqkpje7NfLdXXsmhhVtzAchd1ssiYHCsKCCw3eFxim4prq0IV3yrksB5Fr3kCg773reSGBndR8ZwkjTLa0ZcGzh9+AgTE149v/gXUxhROIbTOBi2I8f0nz0zlu3kYTwaloBjDAsejtGVS7imjzK+NhVIkr8K6CZ/CIbMqkVBIC9Bqo8geJsUx5pchPPjSjd/vMfx6Wa+9SVv88+cLdAQr8B+HXgeZIX7uzOaXli3WPWwwy5g6lzWrjzWVLagkbzFpJYYLGrKYpk0HKdb2mCiUBoTY+Fx9cXOxMWC0Rg43ROkCH1HdMAxDx55e5lBcdYYLhxuSXcLN8NhRAeXY+CV7bnaFATAxiHX9REEgMlsT3geJxnze3kzuNaTLnMGz5P5+coXVo2T86Wvc+NgAIY0aDgpFaww66Je/7iVu62TiM/mBzESzIJ5gTKcxoJfmAu/OD9eCpfgghvXmc1PpmG4A8eEWNOpfhszewYNw1QJkCUPYzDxqC5WphvG9J2/yHGPR+iRR3v8/2dwLmaYIB1UFcR9vUrpYGdjecVe0d9cyWf6JwbcAuC6z2LV5j9WZMCk+L710LM3OvIygZ3zyT0Nmgro+OQimLR70eH/m0ZjmzFbZDWXcU1oHAaGCVXpLptmziTmNDpGk9O4S5gYU4TRiDU+9Iel37O+g6lPmSMcFzQ1Zc0gD9gk6+3cIGUToqnNUEFCqVRKToQ1KSg0E+RvWbaSvwCmPSU3L7TwNiMfpP9pS0yfRNbr3UH+HeiRtrDPsJHh1iVC7uspnFUl/vaBg8F3JjKZPJzjwcItR7jzxfDiYDvCP5z82nQJDu8n+OW7yWQ4ny4QCmkYHW6Bimh4SH4jmzZYBfC+slHwVG9xDKp4H9JAQUMqUYOCdtvMsvdX4Cb+quaeRSyxar0JUdWK+KqY6LGxVW7ZZflMN7btZR/5BbMkkC+WXZVcFVkFBqSDFG4bGtMqTMSn4SKm+gvTYaorwDA/QoatVIBbYtyxrkSKgyswTNSXxQ8VJxBh1Zk8vUvJwvgY01XkcTtsrK6gGuOd/kEL6OYizsw0+65Cr0NXVshc+GSbaiEXFqavW5PPwLZG0onLv9iP1rOfSCj5s7BfcAhoNcF5hNT6LixJ95PT/BVtcR62XIoJBpO3lUSmupvgpYHRTXE6zjugxMsuF29a5WsHTljZ4IGZMMyPqPhckmWXn9l/RFDKtEvC56DU0em4ItytU//BDch+BqvD4WSPqg3iewZuar8Zlgrow+P8GAxfua3FZdBivMtkJ5fT4FdaT7rjFPZsWQMMVjAwBrx8cIyWSlNdIEwc58LCD1vMVac2MFdLxWllslQa+UwPS2bE4r6uC7aPlW+qOLPaqWoYIKj4VMapYhD+8yWig0Efh1EsmO7Kr52Wf3v50iQ58e7SSbIr+kYrW2+7H5w2PGpKdLy+62UVOfMVeGx21qTFcJ/eYBY9Hrcqcv7F5AsaXg9zomEMO5zwBC8dTrkHjFvhBCLHqmDiQPNzd34NDg2IHVP5Dbu6zsXO+Xp18PI52zbjkXhAVJ9GSyPprX2cfwbgr97uHn0fECGKbInClHOTERbp1g4cs0SyjvC35YSnhT97TgFdhSN9RM5sOgP/CYyxTf0Fk7CJ1AemwzhMjmHm5oCp05nGrRjqi0V9Y1Xxg9O4EsznwfsnWseCci2I5PBHi9mRs1md90ym9xuYuOvMO/3AjyiG7lhKb17QdHLhReHlYFXEv5NlbD9Yzy0YwGAwcIbCge87xEnhG8ITYgwajYfR5fByodVj0/lYCE1IFIm86rEwLZBCaaHeoRpOtI4FLVK1hiTOa8D6Vh5mlsR31tDF+2la2+7sIvAwJGg003yEusH531N/qp5qvNmXcRuuO2jtOmZFsEiyeIGpgOEPUxhCUDchg4sJOFY0Jh/m/bbaBdFt2cz8fnYaTvTDCsopexMhnaMqA36hGiJlwaA54TF+vhFdO2rrdRS4A4DSvT1s1A+8S74xC/CyWKfeuC/SJnDKv2v6dQ2xojU+mTPfiWE+wTNU6G5LC6cJ2AwHGpEQ8WAZUasgs/ZMTm5TTT16Pqyg8xUvs6i6Io4bR86+Hjt+IrmwTkv7GjiqWJGb94PisPpjWvhDmH45q34k5hvXLX+d6BSQv4UpcOFwTBacTZHbSBguv5TOEytgeqTAcSbG5vngHG2CMMy0m0h6gr5Ow4Hr+BY7YU88gXjpcGKtqlV52ERtEf5sLTZtVfZeWYEp+VBrP5mTPpA9JWZxoziJADwLV9B9R51/mD0KXosHmhfannRgS/DJMHkW03FtekQsWDqwobXXdNy6rmoMdV3z+xrXoeClFVH2OKzqworkiqqbv6pD5/oE8sN2axMicr658zi5g6XjeqsZb+5J23QGuUkwieHibO2XD3mXyVpqbnmo86rG/s4hnYknXee8gnuF22ltHqnKPSty9o8pMV3Rm/xwUGhKPkNpL613pRQctf2hHYuNm8ESww1rrEVDx1na8jAWxu3MdzfhNTik8VD/kZI0pOjIyv169l2GxSLS5CzydYiTrmTPsfFKf/Kll6Z4OznbZ1NmYFjrjccD6AGRiiVyPixYM6w0JM4E/CCpaPHz/O22P2o60n9HkEEckM+9eWGUhapdtnn/VwCkK1LbWh0G4HcG7eunhUe8xzHIJOWgMD2vtBPNjMuWEc0g78G0mbRqTyTZefGchaYuegYKyqiEUd/Q2Pfmr3Vz8h70VLWc18c01NbvZI5TjI21Nd2G7Gj9VEwnujueWVz/O7AoZFcgZmIbrqEcxLgghrmESFX4ctQ0Tr+hiXQljPqCNTuwQO5vd+H0+fB6ZsG7AyzI9xM8hcfA6wTHFBez3u4nABBK+zHl7/mRra1PdLDlvyT34qqpV6GBgrLVnAzCOhv1lWpv5AXfOcrV/5yZxg6bAVISC0tcfm3DKACgxcK5ImlF4sOE1XuGkMsVeyfCO6Ep+WzuplTTu67VSoPeTuE67jPua9SeoL7fHnXA6XTWT4r9JtkFX0SAOzSY/f9sdVjGLfNjV3T51Os3AGyQf7N3TUBc8VElLKef9tQ47lx1BB11Z6VpeuJQlcJ/dL05W3uCbincEp/dbhLotNOO2VLRORsABtGROEvBFmCYqjSkGp8C5MqIht2iJj+Ao/4ima3m8R8MF5TdC2+K7AJ8/yt7mIeynUZr+wm5WhzcZIVAYCmZWdRlXh5vJ9F+kSPwik3PTFXu/haj2cndh7tg6reBtqoeb28m+s2+0NYPxWBBq6TS1cjAZ3nWA+atWzt/oINYy8+Q1aKgqaNew4oaUa1rQ4z9AIb1fLswvs3EPFCI4bPP7AtgYOo3qlb2Ime/NNK1NwMFXWmM99Zj7I6m0eoiX1EXLb9PUouCZqjGvlmVBO67xq1a0dL3n7ItsNgj4MpNMXVn/aN+5Gxeb117M1AQC3NLLkNHYFF5IemYaeX11ysGmtTzjchqcNyFzI1i4L+gcHFy71UVfaqFGCYwZWLkW9uQYp8ZpcSAMDp/adNAQQGV0BE4ILVsaUKVwfIeTi8bqlSBGLHcGDpGXSz9q7fv+72E76meYCjKPt9t7J7cUqn7rfzaqWpk4NErf7t67cTaOLqWAnfI6KUkw9p010bHllo3dWmmdVP38O5d/YU0nnvC+5si4jk4hjtXrOgWHRqhCtdy2lLNWNZOXWxXuKpAFqHtQlneT4WnxE0bVkKtmxzYWjfVw8mpxm0sR63RBBH9NDNY37HaDK1Z5F46cOACOj2fNkrrpq0aG7BILnlo3VTE0H4wh9taN0Xt0R5NP2q4Nl8GJQgBJQgBJQgBJQgBJQgBJQgBJQjBbC2DwEEytQ/hdK2+1k3FfK2bgIv2p24xej5w0k4tCSrQPgpLcZ72aNk1vSm3OoMOVKGWBH06UIIQUIIQUIIQUIIQUIIQUIIQUIIQUIIQUIIQUIIQUIIQ1IagBcEC15nEg8+MQJNwA3464gA57rihsbQH30o+o+qj/640UQuCJmNDd41mjANgFz5gcxT/vr7xSoLIH1MwMJaO4LPkSyBH9N2TZmpeUKGIGHp+GLcYhEcBkG+t5xDhDxY1xkhBBsXSGTy1OkN0vkvNC7qNEf2jM7A7uRjRyzRFjx8LItjdsCGHEGRYLJ3Bo/rpuRNd1LygN7eIQX++5BZcwojhJefheo9R50QIMjCWruAuLf349as5zmI5tZSLrWeMAAcxosfaOuwfZGg1pCADY+kIXsKSzNveB9M0gpkB1IqgZ4lYchE4gF2Dy2sxvX8NhBRkYCwdwQs3EY35SSLjWl1rVNBBmKuOBiBLbk/0ZbqAnYDT+Ww9Y6kF6RtLDTL4VuyWnrvSTI0Ken3t2rVnIIueSnaWzcGJDqaDHPWLBdSC9I2lRkfwp6eJtxh3qn96r7rU/C1WZJGoXoqIg58ctD8hexdSkKGxtAc/gBEvofe30fv4Gql5QYewkasJCsBu+sRfu4q19Rh+H5UgA2NpD14cLJ+cNZi2We/ja6TmBS1R93uHV/bmIJNmBlQaVIIMjaU9eP6QesIwYx+tUpVVBJQgBJQgBJQgBJQgBJQgBJQgBJQgBJQgBJQgBJQgBJQgBLB1rGQAAAKGSURBVJQgBJQgBJQgBJQgBJQgBJQgBJQgBJQgBJQgBJQgBJQgBJQgBJQgBJQgBB9WUACL/PXCbGJc3SHqR9RpVRY18FuMJcdxGDEYyTntQwLdbSOo6MgpXaj6qwk+sCCsCTFTCRKqBra8VGXxfY4yojbummbuXQBA91itex5p9WvFaIAfsSA3fBUoEyQtX11p8X2iA4guYn9iK94XVFjhJKXymGEfsaDk3tJs/QRxiN/pS44BwCWC/DxmNwiBd+Hzl184cRwmlwJg/tNwcfnvHETBTffKN33MgnKkvQwUlISPvqZaldMh6klpnHjWzi+wH6GggHaby4d9zE1q9KSkfNPHLAisxn+pmkjvrbJYTrmg3AQGZtPzJ6KfL3GLdVgCF1xHQkHelX+YlrjFyjd91IJAE/e3VRLpJ1UWyykXBEDetoHOmP31sjTo1bkVzOFQUJVud6o0SL3p4xZ0lTXFoFuM/AkgcEAUrRL0qzduEW1BCJpTOTghqHzTxy0IpHFP6isoNgZcwlS/lZ5sTQrKZaY+BSCEEDS3cnAoqGLTRy6owDFID0G8CQC8lseAN5JORDZf6N6WFLSf6PZcoNQkqGLTRy4I7MNUadB2kiNVFssJUa450pIGb7F0TujsTQtDeOcB6Olx+jaz47EdwfxW2e8Lule+6WMXBDpXzsUCqiyWc6UxFwsYSCTSZ+JdOA5diR9hPWwvfLHJlR+UuUY8/n1BoHzTxyvIIEqf1vUZEPyHBf03+G8JyvIp43QtBK8W/y1B/0EoQQgoQQgoQQgoQQgoQQgoQQgoQQgoQQgoQQgoQQgoQQgoQQgoQQgoQQgoQQgoQQgoQQgoQQgoQQgoQQgoQQj+D5ObjjfXtiGRAAAAAElFTkSuQmCC" /><!-- --></p>
+<p>We can inspect, how the uncertainty scales with the flux
+magnitude.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>results_good <span class="sc">%&gt;%</span> <span class="fu">slice</span>(<span class="fu">sample.int</span>(<span class="fu">nrow</span>(results_good),<span class="dv">400</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">plot</span>( NEE_uStar_fsd <span class="sc">~</span> NEE_uStar_fall, <span class="at">data =</span> . )</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
 </div>
 <div id="omitting-problematic-records" class="section level2">
 <h2>Omitting problematic records</h2>
-<p>REddyProc flags filled data with poor gap-filling by a quality flag in <code>NEE_&lt;uStar&gt;_fqc</code> &gt; 0 but still reports the fluxes. For aggregation we recommend computing the mean including those gap-filled records, i.e. using <code>NEE_&lt;uStar&gt;_f</code> instead of <code>NEE_orig</code>. However, for estimating the uncertainty of the aggregated value, the the gap-filled records should not contribute to the reduction of uncertainty due to more replicates.</p>
-<p>Hence, first we create a column similar <code>NEE_orig_sd</code> to <code>NEE_&lt;uStar&gt;_fsd</code> but where the estimated uncertainty is set to missing for the gap-filled records.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> EProc<span class="sc">$</span><span class="fu">sExportResults</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">NEE_orig_sd =</span> <span class="fu">ifelse</span>(</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.finite</span>(.data<span class="sc">$</span>NEE_uStar_orig), .data<span class="sc">$</span>NEE_uStar_fsd, <span class="cn">NA</span>),</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">NEE_uStar_fgood =</span> <span class="fu">ifelse</span>(</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.finite</span>(.data<span class="sc">$</span>NEE_uStar_fqc <span class="sc">&lt;=</span> <span class="dv">1</span>), .data<span class="sc">$</span>NEE_uStar_f, <span class="cn">NA</span>)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-<p>If the aggregated mean should be computed excluding poor quality-gap-filled data, then its best to use a column with values set to missing for poor quality, e.g. using <code>NEE_&lt;uStar&gt;_fgood</code> instead of <code>NEE_&lt;uStar&gt;_f</code>. However, the bias in aggregated results can be larger when omitting records, e.g. consistently omitting more low night-time fluxes, than with using poor estimates of those fluxes.</p>
+<p>REddyProc flags filled data with poor gap-filling by a quality flag
+in <code>NEE_&lt;uStar&gt;_fqc</code> &gt; 0 but still reports the
+fluxes. For aggregation we recommend computing the mean including those
+gap-filled records, i.e. using <code>NEE_&lt;uStar&gt;_f</code> instead
+of <code>NEE_orig</code>. However, for estimating the uncertainty of the
+aggregated value, the the gap-filled records should not contribute to
+the reduction of uncertainty due to more replicates.</p>
+<p>Hence, first we create a column similar <code>NEE_orig_sd</code> to
+<code>NEE_&lt;uStar&gt;_fsd</code> but where the estimated uncertainty
+is set to missing for the gap-filled records.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>results <span class="ot">&lt;-</span> EProc<span class="sc">$</span><span class="fu">sExportResults</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>    <span class="at">NEE_orig_sd =</span> <span class="fu">ifelse</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>      <span class="fu">is.finite</span>(.data<span class="sc">$</span>NEE_uStar_orig), .data<span class="sc">$</span>NEE_uStar_fsd, <span class="cn">NA</span>),</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>    <span class="at">NEE_uStar_fgood =</span> <span class="fu">ifelse</span>(</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>      <span class="fu">is.finite</span>(.data<span class="sc">$</span>NEE_uStar_fqc) <span class="sc">&amp;</span> (.data<span class="sc">$</span>NEE_uStar_fqc <span class="sc">&lt;=</span> <span class="dv">1</span>), .data<span class="sc">$</span>NEE_uStar_f, <span class="cn">NA</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>)</span></code></pre></div>
+<p>If the aggregated mean should be computed excluding poor
+quality-gap-filled data, then its best to use a column with values set
+to missing for poor quality, e.g. using
+<code>NEE_&lt;uStar&gt;_fgood</code> instead of
+<code>NEE_&lt;uStar&gt;_f</code>. However, the bias in aggregated
+results can be larger when omitting records, e.g. consistently omitting
+more low night-time fluxes, than with using poor estimates of those
+fluxes.</p>
 </div>
 <div id="random-error" class="section level2">
 <h2>Random error</h2>
-<p>For a given u* threshold, the aggregation across time uses many records. The random error in each record, i.e. <code>NEE_fsd</code>, is only partially correlated to the random error to records close by. Hence, the relative uncertainty of the aggregated value decreases compared to the average relative uncertainty of the individual observations.</p>
+<p>For a given u* threshold, the aggregation across time uses many
+records. The random error in each record, i.e. <code>NEE_fsd</code>, is
+only partially correlated to the random error to records close by.
+Hence, the relative uncertainty of the aggregated value decreases
+compared to the average relative uncertainty of the individual
+observations.</p>
 <div id="wrong-aggregation-without-correlations" class="section level3">
 <h3>Wrong aggregation without correlations</h3>
-<p>With neglecting correlations among records, the uncertainty of the mean annual flux is computed by adding the variances. The mean is computed by <span class="math inline">\(m = \sum{x_i}/n\)</span>. And hence its standard deviation by <span class="math inline">\(sd(m) = \sqrt{Var(m)}= \sqrt{\sum{Var(x_i)}/n^2} = \sqrt{n \bar{\sigma^2}/n^2} = \bar{\sigma^2}/\sqrt{n}\)</span>. This results in an approximate reduction of the average standard deviation <span class="math inline">\(\bar{\sigma^2}\)</span> by <span class="math inline">\(\sqrt{n}\)</span>.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>results <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">nRec =</span> <span class="fu">sum</span>(<span class="fu">is.finite</span>(NEE_orig_sd))</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  , <span class="at">NEEagg =</span> <span class="fu">mean</span>(NEE_uStar_f)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  , <span class="at">varSum =</span> <span class="fu">sum</span>(NEE_orig_sd<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  , <span class="at">seMean =</span> <span class="fu">sqrt</span>(varSum) <span class="sc">/</span> nRec</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  , <span class="at">seMeanApprox =</span> <span class="fu">mean</span>(NEE_orig_sd, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fu">sqrt</span>(nRec)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> <span class="fu">select</span>(NEEagg, nRec, seMean, seMeanApprox)</span></code></pre></div>
+<p>With neglecting correlations among records, the uncertainty of the
+mean annual flux is computed by adding the variances. The mean is
+computed by <span class="math inline">\(m = \sum{x_i}/n\)</span>. And
+hence its standard deviation by <span class="math inline">\(sd(m) =
+\sqrt{Var(m)}= \sqrt{\sum{Var(x_i)}/n^2} = \sqrt{n \bar{\sigma^2}/n^2} =
+\bar{\sigma^2}/\sqrt{n}\)</span>. This results in an approximate
+reduction of the average standard deviation <span class="math inline">\(\bar{\sigma^2}\)</span> by <span class="math inline">\(\sqrt{n}\)</span>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>results <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="at">nRec =</span> <span class="fu">sum</span>(<span class="fu">is.finite</span>(NEE_orig_sd))</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  , <span class="at">NEEagg =</span> <span class="fu">mean</span>(NEE_uStar_f)</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  , <span class="at">varSum =</span> <span class="fu">sum</span>(NEE_orig_sd<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  , <span class="at">seMean =</span> <span class="fu">sqrt</span>(varSum) <span class="sc">/</span> nRec</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  , <span class="at">seMeanApprox =</span> <span class="fu">mean</span>(NEE_orig_sd, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fu">sqrt</span>(nRec)</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> <span class="fu">select</span>(NEEagg, nRec, seMean, seMeanApprox)</span></code></pre></div>
 <pre><code>##      NEEagg  nRec     seMean seMeanApprox
 ## 1 -1.657303 10901 0.02988839   0.02650074</code></pre>
-<p>Due to the large number of records, the estimated uncertainty is very low.</p>
+<p>Due to the large number of records, the estimated uncertainty is very
+low.</p>
 </div>
 <div id="considering-correlations" class="section level3">
 <h3>Considering correlations</h3>
-<p>When observations are not independent of each other, the formulas now become <span class="math inline">\(Var(m) = s^2/n_{eff}\)</span> where <span class="math inline">\(s^2 = \frac{n_{eff}}{n(n_{eff}-1)} \sum_{i=1}^n \sigma_i^2\)</span>, and with the number of effective observations <span class="math inline">\(n_{eff}\)</span> decreasing with the autocorrelation among records (Bayley 1946, Zieba 2011).</p>
-<p>The average standard deviation <span class="math inline">\(\sqrt{\bar{\sigma^2_i}}\)</span> now approximately decreases only by about <span class="math inline">\(\sqrt{n_{eff}}\)</span>:</p>
+<p>When observations are not independent of each other, the formulas now
+become <span class="math inline">\(Var(m) = s^2/n_{eff}\)</span> where
+<span class="math inline">\(s^2 = \frac{n_{eff}}{n(n_{eff}-1)}
+\sum_{i=1}^n \sigma_i^2\)</span>, and with the number of effective
+observations <span class="math inline">\(n_{eff}\)</span> decreasing
+with the autocorrelation among records (Bayley 1946, Zieba 2011).</p>
+<p>The average standard deviation <span class="math inline">\(\sqrt{\bar{\sigma^2_i}}\)</span> now approximately
+decreases only by about <span class="math inline">\(\sqrt{n_{eff}}\)</span>:</p>
 <p><span class="math display">\[
-Var(m) = \frac{s^2}{n_{eff}} 
+Var(m) = \frac{s^2}{n_{eff}}
 = \frac{\frac{n_{eff}}{n(n_{eff}-1)} \sum_{i=1}^n \sigma_i^2}{n_{eff}}
 = \frac{1}{n(n_{eff}-1)} \sum_{i=1}^n \sigma_i^2 \\
-= \frac{1}{n(n_{eff}-1)} n \bar{\sigma^2_i} = \frac{\bar{\sigma^2_i}}{(n_{eff}-1)} 
+= \frac{1}{n(n_{eff}-1)} n \bar{\sigma^2_i} =
+\frac{\bar{\sigma^2_i}}{(n_{eff}-1)}
 \]</span></p>
-<p>First we need to quantify the error terms, i.e. model-data residuals. For all the records of good quality, we have an original measured value <code>NEE_uStar_orig</code> and modelled value from MDS gapfilling, <code>NEE_uStar_fall</code>.</p>
-<p>For computing autocorrelation, equidistant time steps are important. Hence, instead of filtering, the residuals of bad-quality data are set to missing.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> EProc<span class="sc">$</span><span class="fu">sExportResults</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">resid =</span> <span class="fu">ifelse</span>(NEE_uStar_fqc <span class="sc">==</span> <span class="dv">0</span>, NEE_uStar_orig <span class="sc">-</span> NEE_uStar_fall, <span class="cn">NA</span>)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    ,<span class="at">NEE_orig_sd =</span> <span class="fu">ifelse</span>(</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.finite</span>(.data<span class="sc">$</span>NEE_uStar_orig), .data<span class="sc">$</span>NEE_uStar_fsd, <span class="cn">NA</span>)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<p>First we need to quantify the error terms, i.e. model-data residuals.
+For all the records of good quality, we have an original measured value
+<code>NEE_uStar_orig</code> and modelled value from MDS gapfilling,
+<code>NEE_uStar_fall</code>.</p>
+<p>For computing autocorrelation, equidistant time steps are important.
+Hence, instead of filtering, the residuals of non-observation,
+i.e. gap-filled, data are set to missing.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>results <span class="ot">&lt;-</span> EProc<span class="sc">$</span><span class="fu">sExportResults</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>    <span class="at">resid =</span> <span class="fu">ifelse</span>(NEE_uStar_fqc <span class="sc">==</span> <span class="dv">0</span>, NEE_uStar_orig <span class="sc">-</span> NEE_uStar_fall, <span class="cn">NA</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    ,<span class="at">NEE_orig_sd =</span> <span class="fu">ifelse</span>(</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>      <span class="fu">is.finite</span>(.data<span class="sc">$</span>NEE_uStar_orig), .data<span class="sc">$</span>NEE_uStar_fsd, <span class="cn">NA</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  )</span></code></pre></div>
 <p>Now we can inspect the the autocorrelation of the errors.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(results<span class="sc">$</span>resid, <span class="at">na.action =</span> na.pass, <span class="at">main =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">acf</span>(results<span class="sc">$</span>resid, <span class="at">na.action =</span> na.pass, <span class="at">main =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
 <p><img src="data:image/png;base64,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" /><!-- --></p>
-<p>The empirical autocorrelation function shows strong positive autocorrelation in residuals up to a lag of 10 records.</p>
-<p>Computation of effective number of observations is provided by function <code>computeEffectiveNumObs</code> from package <code>lognorm</code> based on the empirical autocorrelation function for given model-data residuals. Note that this function needs to be applied to the series including all records, i.e.  not filtering quality flag before.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>autoCorr <span class="ot">&lt;-</span> lognorm<span class="sc">::</span><span class="fu">computeEffectiveAutoCorr</span>(results<span class="sc">$</span>resid)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>nEff <span class="ot">&lt;-</span> lognorm<span class="sc">::</span><span class="fu">computeEffectiveNumObs</span>(results<span class="sc">$</span>resid, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">nEff =</span> nEff, <span class="at">nObs =</span> <span class="fu">sum</span>(<span class="fu">is.finite</span>(results<span class="sc">$</span>resid)))</span></code></pre></div>
+<p>The empirical autocorrelation function shows strong positive
+autocorrelation in residuals up to a lag of 10 records.</p>
+<p>Computation of effective number of observations is provided by
+function <code>computeEffectiveNumObs</code> from package
+<code>lognorm</code> based on the empirical autocorrelation function for
+given model-data residuals. Note that this function needs to be applied
+to the series including all records, i.e.  not filtering quality flag
+before.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>autoCorr <span class="ot">&lt;-</span> lognorm<span class="sc">::</span><span class="fu">computeEffectiveAutoCorr</span>(results<span class="sc">$</span>resid)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>nEff <span class="ot">&lt;-</span> lognorm<span class="sc">::</span><span class="fu">computeEffectiveNumObs</span>(results<span class="sc">$</span>resid, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="fu">c</span>(<span class="at">nEff =</span> nEff, <span class="at">nObs =</span> <span class="fu">sum</span>(<span class="fu">is.finite</span>(results<span class="sc">$</span>resid)))</span></code></pre></div>
 <pre><code>##      nEff      nObs 
 ##  4230.522 10901.000</code></pre>
-<p>We see that the effective number of observations is only about a third of the number of observations.</p>
-<p>Now we can use the formulas for the sum and the mean of correlated normally distributed variables to compute the uncertainty of the mean.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>resRand <span class="ot">&lt;-</span> results <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">nRec =</span> <span class="fu">sum</span>(<span class="fu">is.finite</span>(NEE_orig_sd))</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  , <span class="at">NEEagg =</span> <span class="fu">mean</span>(NEE_uStar_f, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  , <span class="at">varMean =</span> <span class="fu">sum</span>(NEE_orig_sd<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> nRec <span class="sc">/</span> (<span class="sc">!!</span>nEff <span class="sc">-</span> <span class="dv">1</span>)</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  , <span class="at">seMean =</span> <span class="fu">sqrt</span>(varMean) </span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#, seMean2 = sqrt(mean(NEE_orig_sd^2, na.rm = TRUE)) / sqrt(!!nEff - 1)</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  , <span class="at">seMeanApprox =</span> <span class="fu">mean</span>(NEE_orig_sd, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="sc">!!</span>nEff <span class="sc">-</span> <span class="dv">1</span>)</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> <span class="fu">select</span>(NEEagg, seMean, seMeanApprox)</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>resRand</span></code></pre></div>
+<p>We see that the effective number of observations is only about a
+third of the number of observations.</p>
+<p>Now we can use the formulas for the sum and the mean of correlated
+normally distributed variables to compute the uncertainty of the
+mean.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>resRand <span class="ot">&lt;-</span> results <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="at">nRec =</span> <span class="fu">sum</span>(<span class="fu">is.finite</span>(NEE_orig_sd))</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  , <span class="at">NEEagg =</span> <span class="fu">mean</span>(NEE_uStar_f, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>  , <span class="at">varMean =</span> <span class="fu">sum</span>(NEE_orig_sd<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> nRec <span class="sc">/</span> (<span class="sc">!!</span>nEff <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>  , <span class="at">seMean =</span> <span class="fu">sqrt</span>(varMean) </span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>  <span class="co">#, seMean2 = sqrt(mean(NEE_orig_sd^2, na.rm = TRUE)) / sqrt(!!nEff - 1)</span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>  , <span class="at">seMeanApprox =</span> <span class="fu">mean</span>(NEE_orig_sd, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="sc">!!</span>nEff <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> <span class="fu">select</span>(NEEagg, seMean, seMeanApprox)</span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>resRand</span></code></pre></div>
 <pre><code>##      NEEagg     seMean seMeanApprox
 ## 1 -1.657303 0.04798329   0.04254471</code></pre>
-<p>The aggregated value is the same, but its uncertainty increased compared to the computation neglecting correlations.</p>
-<p>Note, how we used <code>NEE_uStar_f</code> for computing the mean, but <code>NEE_orig_sd</code> instead of <code>NEE_uStar_fsd</code> for computing the uncertainty.</p>
+<p>The aggregated value is the same, but its uncertainty increased
+compared to the computation neglecting correlations.</p>
+<p>Note, how we used <code>NEE_uStar_f</code> for computing the mean,
+but <code>NEE_orig_sd</code> instead of <code>NEE_uStar_fsd</code> for
+computing the uncertainty.</p>
 </div>
 <div id="daily-aggregation" class="section level3">
 <h3>Daily aggregation</h3>
 <p>When aggregating daily respiration, the same principles hold.</p>
-<p>However, when computing the number of effective observations, we recommend using the empirical autocorrelation function estimated on longer time series of residuals (<code>autoCorr</code> computed above) in <code>computeEffectiveNumObs</code> instead of estimating them from the residuals of each day.</p>
+<p>However, when computing the number of effective observations, we
+recommend using the empirical autocorrelation function estimated on
+longer time series of residuals (<code>autoCorr</code> computed above)
+in <code>computeEffectiveNumObs</code> instead of estimating them from
+the residuals of each day.</p>
 <p>First, create a column DoY to subset records of each day.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> results <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">DateTime =</span> EddyDataWithPosix<span class="sc">$</span>DateTime     <span class="co"># take time stamp form input data</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  , <span class="at">DoY =</span> <span class="fu">as.POSIXlt</span>(DateTime <span class="sc">-</span> <span class="dv">15</span><span class="sc">*</span><span class="dv">60</span>)<span class="sc">$</span>yday <span class="co"># midnight belongs to the previous</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-<p>Now the aggregation can be done on data grouped by DoY. The notation <code>!!</code> tells <code>summarise</code> to use the variable <code>autoCorr</code> instead of a column with that name.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>aggDay <span class="ot">&lt;-</span> results <span class="sc">%&gt;%</span> </span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(DoY) <span class="sc">%&gt;%</span> </span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">DateTime =</span> <span class="fu">first</span>(DateTime)</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    ,<span class="at">nEff =</span> lognorm<span class="sc">::</span><span class="fu">computeEffectiveNumObs</span>(</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>       resid, <span class="at">effAcf =</span> <span class="sc">!!</span>autoCorr, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    , <span class="at">nRec =</span> <span class="fu">sum</span>(<span class="fu">is.finite</span>(NEE_orig_sd))</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    , <span class="at">NEE =</span> <span class="fu">mean</span>(NEE_uStar_f, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    , <span class="at">sdNEE =</span> <span class="cf">if</span> (nEff <span class="sc">&lt;=</span> <span class="dv">1</span>) <span class="cn">NA_real_</span> <span class="cf">else</span> <span class="fu">sqrt</span>(</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mean</span>(NEE_orig_sd<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> (nEff <span class="sc">-</span> <span class="dv">1</span>)) </span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    , <span class="at">sdNEEuncorr =</span> <span class="cf">if</span> (nRec <span class="sc">&lt;=</span> <span class="dv">1</span>) <span class="cn">NA_real_</span> <span class="cf">else</span> <span class="fu">sqrt</span>(</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>       <span class="fu">mean</span>(NEE_orig_sd<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> (nRec <span class="sc">-</span> <span class="dv">1</span>))</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    , <span class="at">.groups =</span> <span class="st">&quot;drop_last&quot;</span></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>aggDay</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>results <span class="ot">&lt;-</span> results <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="at">DateTime =</span> EddyDataWithPosix<span class="sc">$</span>DateTime     <span class="co"># take time stamp form input data</span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>  , <span class="at">DoY =</span> <span class="fu">as.POSIXlt</span>(DateTime <span class="sc">-</span> <span class="dv">15</span><span class="sc">*</span><span class="dv">60</span>)<span class="sc">$</span>yday <span class="co"># midnight belongs to the previous</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>)</span></code></pre></div>
+<p>Now the aggregation can be done on data grouped by DoY. The notation
+<code>!!</code> tells <code>summarise</code> to use the variable
+<code>autoCorr</code> instead of a column with that name.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>aggDay <span class="ot">&lt;-</span> results <span class="sc">%&gt;%</span> </span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>  <span class="fu">group_by</span>(DoY) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>    <span class="at">DateTime =</span> <span class="fu">first</span>(DateTime)</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>    ,<span class="at">nEff =</span> lognorm<span class="sc">::</span><span class="fu">computeEffectiveNumObs</span>(</span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>       resid, <span class="at">effAcf =</span> <span class="sc">!!</span>autoCorr, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>    , <span class="at">nRec =</span> <span class="fu">sum</span>(<span class="fu">is.finite</span>(NEE_orig_sd))</span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>    , <span class="at">NEE =</span> <span class="fu">mean</span>(NEE_uStar_f, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a>    , <span class="at">sdNEE =</span> <span class="cf">if</span> (nEff <span class="sc">&lt;=</span> <span class="dv">1</span>) <span class="cn">NA_real_</span> <span class="cf">else</span> <span class="fu">sqrt</span>(</span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a>      <span class="fu">mean</span>(NEE_orig_sd<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> (nEff <span class="sc">-</span> <span class="dv">1</span>)) </span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a>    , <span class="at">sdNEEuncorr =</span> <span class="cf">if</span> (nRec <span class="sc">&lt;=</span> <span class="dv">1</span>) <span class="cn">NA_real_</span> <span class="cf">else</span> <span class="fu">sqrt</span>(</span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a>       <span class="fu">mean</span>(NEE_orig_sd<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> (nRec <span class="sc">-</span> <span class="dv">1</span>))</span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a>    , <span class="at">.groups =</span> <span class="st">&quot;drop_last&quot;</span></span>
+<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a>  )</span>
+<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a>aggDay</span></code></pre></div>
 <pre><code>## # A tibble: 365 × 7
 ##      DoY DateTime             nEff  nRec      NEE  sdNEE sdNEEuncorr
 ##    &lt;int&gt; &lt;dttm&gt;              &lt;dbl&gt; &lt;int&gt;    &lt;dbl&gt;  &lt;dbl&gt;       &lt;dbl&gt;
@@ -277,63 +539,78 @@ Var(m) = \frac{s^2}{n_{eff}}
 ##  8     7 1998-01-08 00:30:00 17.7     46 -0.139    0.525       0.320
 ##  9     8 1998-01-09 00:30:00 17.5     45  0.614    0.474       0.290
 ## 10     9 1998-01-10 00:30:00 15.4     36  0.242    0.641       0.411
-## # … with 355 more rows</code></pre>
+## # ℹ 355 more rows</code></pre>
 <p><img src="data:image/png;base64,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" /><!-- --></p>
-<p>The confidence bounds (+-1.96 stdDev) computed with accounting for correlations in this case are about twice the ones computed with neglecting correlations.</p>
+<p>The confidence bounds (+-1.96 stdDev) computed with accounting for
+correlations in this case are about twice the ones computed with
+neglecting correlations.</p>
 </div>
 </div>
 <div id="u-threshold-uncertainty" class="section level2">
 <h2>u* threshold uncertainty</h2>
-<p>There is also flux uncertainty due to uncertainty in u* threshold estimation. Since the same threshold is used for all times in a given uStar scenario, the relative uncertainty of this component does not decrease when aggregating across time.</p>
+<p>There is also flux uncertainty due to uncertainty in u* threshold
+estimation. Since the same threshold is used for all times in a given
+uStar scenario, the relative uncertainty of this component does not
+decrease when aggregating across time.</p>
 <p>The strategy is to</p>
 <p>1. estimate distribution of u* threshold</p>
-<p>2. compute time series of NEE (or other values of interest) for draws from this distribution, i.e. for many uStar-scenarios</p>
+<p>2. compute time series of NEE (or other values of interest) for draws
+from this distribution, i.e. for many uStar-scenarios</p>
 <p>3. compute each associated aggregated value</p>
 <p>4. and then look at the distribution of the aggregated values.</p>
-<p>Note that the entire processing down to the aggregated value has to be repeated for each uStar scenario. Hence, obtaining a good estimate of this uncertainty is computationally expensive.</p>
-<p>1. First, we estimate many samples of the probability density of the unknown uStar threshold.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># for run-time of the vignette creation, here we use only few (3) uStar quantiles </span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># For real-world applications, a larger sample (&gt; 30) is required.</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>nScen <span class="ot">&lt;-</span> <span class="dv">3</span> <span class="co"># nScen &lt;- 39</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>EddyDataWithPosix <span class="ot">&lt;-</span> Example_DETha98 <span class="sc">%&gt;%</span> </span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filterLongRuns</span>(<span class="st">&quot;NEE&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fConvertTimeToPosix</span>(<span class="st">&#39;YDH&#39;</span>,<span class="at">Year =</span> <span class="st">&#39;Year&#39;</span>,<span class="at">Day =</span> <span class="st">&#39;DoY&#39;</span>, <span class="at">Hour =</span> <span class="st">&#39;Hour&#39;</span>)</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>EProc <span class="ot">&lt;-</span> sEddyProc<span class="sc">$</span><span class="fu">new</span>(</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">&#39;DE-Tha&#39;</span>, EddyDataWithPosix, <span class="fu">c</span>(<span class="st">&#39;NEE&#39;</span>,<span class="st">&#39;Rg&#39;</span>,<span class="st">&#39;Tair&#39;</span>,<span class="st">&#39;VPD&#39;</span>, <span class="st">&#39;Ustar&#39;</span>))</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>EProc<span class="sc">$</span><span class="fu">sEstimateUstarScenarios</span>( </span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">nSample =</span> nScen<span class="sc">*</span><span class="dv">4</span>, <span class="at">probs =</span> <span class="fu">seq</span>(<span class="fl">0.025</span>,<span class="fl">0.975</span>,<span class="at">length.out =</span> nScen) )</span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>uStarSuffixes <span class="ot">&lt;-</span> <span class="fu">colnames</span>(EProc<span class="sc">$</span><span class="fu">sGetUstarScenarios</span>())[<span class="sc">-</span><span class="dv">1</span>]</span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>uStarSuffixes <span class="co"># in real world should use &gt; 30</span></span></code></pre></div>
+<p>Note that the entire processing down to the aggregated value has to
+be repeated for each uStar scenario. Hence, obtaining a good estimate of
+this uncertainty is computationally expensive.</p>
+<p>1. First, we estimate many samples of the probability density of the
+unknown uStar threshold.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="co"># for run-time of the vignette creation, here we use only few (3) uStar quantiles </span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="co"># For real-world applications, a larger sample (&gt; 30) is required.</span></span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>nScen <span class="ot">&lt;-</span> <span class="dv">3</span> <span class="co"># nScen &lt;- 39</span></span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>EddyDataWithPosix <span class="ot">&lt;-</span> Example_DETha98 <span class="sc">%&gt;%</span> </span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>  <span class="fu">filterLongRuns</span>(<span class="st">&quot;NEE&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>  <span class="fu">fConvertTimeToPosix</span>(<span class="st">&#39;YDH&#39;</span>,<span class="at">Year =</span> <span class="st">&#39;Year&#39;</span>,<span class="at">Day =</span> <span class="st">&#39;DoY&#39;</span>, <span class="at">Hour =</span> <span class="st">&#39;Hour&#39;</span>)</span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>EProc <span class="ot">&lt;-</span> sEddyProc<span class="sc">$</span><span class="fu">new</span>(</span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a>  <span class="st">&#39;DE-Tha&#39;</span>, EddyDataWithPosix, <span class="fu">c</span>(<span class="st">&#39;NEE&#39;</span>,<span class="st">&#39;Rg&#39;</span>,<span class="st">&#39;Tair&#39;</span>,<span class="st">&#39;VPD&#39;</span>, <span class="st">&#39;Ustar&#39;</span>))</span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a>EProc<span class="sc">$</span><span class="fu">sEstimateUstarScenarios</span>( </span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a>  <span class="at">nSample =</span> nScen<span class="sc">*</span><span class="dv">4</span>, <span class="at">probs =</span> <span class="fu">seq</span>(<span class="fl">0.025</span>,<span class="fl">0.975</span>,<span class="at">length.out =</span> nScen) )</span>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a>uStarSuffixes <span class="ot">&lt;-</span> <span class="fu">colnames</span>(EProc<span class="sc">$</span><span class="fu">sGetUstarScenarios</span>())[<span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a>uStarSuffixes <span class="co"># in real world should use &gt; 30</span></span></code></pre></div>
 <pre><code>## [1] &quot;uStar&quot; &quot;U2.5&quot;  &quot;U50&quot;   &quot;U97.5&quot;</code></pre>
-<p>2. Produce time series of gapfilled NEE for each scenario. They are stored in columns distinguished by a suffix with the quantile.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>EProc<span class="sc">$</span><span class="fu">sMDSGapFillUStarScens</span>(<span class="st">&#39;NEE&#39;</span>)</span></code></pre></div>
-<p>3. Compute the annual mean for each scenario. Method <code>sEddyProc_sApplyUStarScen</code> calls a user-provided function that takes an argument suffix for each u*-threshold scenario. Here, we use it to create the corresponding NEE column name and compute mean across this column in the data exported from REddyProc.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>computeMeanNEE <span class="ot">&lt;-</span> <span class="cf">function</span>(ds, suffix){</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  column_name <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;NEE_&quot;</span>,suffix,<span class="st">&quot;_f&quot;</span>)</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>(ds[[column_name]])</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>FilledEddyData <span class="ot">&lt;-</span> EProc<span class="sc">$</span><span class="fu">sExportResults</span>()</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>NEEagg <span class="ot">&lt;-</span> <span class="fu">unlist</span>(EProc<span class="sc">$</span><span class="fu">sApplyUStarScen</span>(computeMeanNEE, FilledEddyData))</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>NEEagg</span></code></pre></div>
+<p>2. Produce time series of gapfilled NEE for each scenario. They are
+stored in columns distinguished by a suffix with the quantile.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>EProc<span class="sc">$</span><span class="fu">sMDSGapFillUStarScens</span>(<span class="st">&#39;NEE&#39;</span>)</span></code></pre></div>
+<p>3. Compute the annual mean for each scenario. Method
+<code>sEddyProc_sApplyUStarScen</code> calls a user-provided function
+that takes an argument suffix for each u*-threshold scenario. Here, we
+use it to create the corresponding NEE column name and compute mean
+across this column in the data exported from REddyProc.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>computeMeanNEE <span class="ot">&lt;-</span> <span class="cf">function</span>(ds, suffix){</span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>  column_name <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;NEE_&quot;</span>,suffix,<span class="st">&quot;_f&quot;</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>  <span class="fu">mean</span>(ds[[column_name]])</span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>}</span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>FilledEddyData <span class="ot">&lt;-</span> EProc<span class="sc">$</span><span class="fu">sExportResults</span>()</span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a>NEEagg <span class="ot">&lt;-</span> <span class="fu">unlist</span>(EProc<span class="sc">$</span><span class="fu">sApplyUStarScen</span>(computeMeanNEE, FilledEddyData))</span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a>NEEagg</span></code></pre></div>
 <pre><code>##     uStar      U2.5       U50     U97.5 
-## -1.616926 -1.631296 -1.614860 -1.645656</code></pre>
+## -1.616926 -1.631296 -1.625671 -1.639850</code></pre>
 <p>4. compute uncertainty across aggregated values</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>sdNEEagg_ustar <span class="ot">&lt;-</span> <span class="fu">sd</span>(NEEagg)</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>sdNEEagg_ustar</span></code></pre></div>
-<pre><code>## [1] 0.01432019</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>sdNEEagg_ustar <span class="ot">&lt;-</span> <span class="fu">sd</span>(NEEagg)</span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>sdNEEagg_ustar</span></code></pre></div>
+<pre><code>## [1] 0.009636502</code></pre>
 </div>
 <div id="combined-aggregated-uncertainty" class="section level2">
 <h2>Combined aggregated uncertainty</h2>
-<p>Assuming that the uncertainty due to unknown u*threshold is independent from the random uncertainty, the variances add.</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>sdAnnual <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">sdRand =</span> resRand<span class="sc">$</span>seMean,</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sdUstar =</span> sdNEEagg_ustar,</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">sdComb =</span> <span class="fu">sqrt</span>(resRand<span class="sc">$</span>seMean<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> sdNEEagg_ustar<span class="sc">^</span><span class="dv">2</span>) </span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>sdAnnual</span></code></pre></div>
-<pre><code>##       sdRand    sdUstar     sdComb
-## 1 0.04798329 0.01432019 0.05007459</code></pre>
+<p>Assuming that the uncertainty due to unknown u*threshold is
+independent from the random uncertainty, the variances add.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>sdAnnual <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>  <span class="at">sdRand =</span> resRand<span class="sc">$</span>seMean,</span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a>  <span class="at">sdUstar =</span> sdNEEagg_ustar,</span>
+<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a>  <span class="at">sdComb =</span> <span class="fu">sqrt</span>(resRand<span class="sc">$</span>seMean<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> sdNEEagg_ustar<span class="sc">^</span><span class="dv">2</span>) </span>
+<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a>)</span>
+<span id="cb23-6"><a href="#cb23-6" tabindex="-1"></a>sdAnnual</span></code></pre></div>
+<pre><code>##       sdRand     sdUstar     sdComb
+## 1 0.04798329 0.009636502 0.04894138</code></pre>
 </div>
 </div>
 

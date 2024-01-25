@@ -197,3 +197,38 @@ test_that("reading Berkeley",{
   expect_equal( as.numeric(time2), as.numeric(res$DateTime))
 })
 
+test_that("get_day_boundaries, filter_entire_days",{
+  ds <- suppressMessages(fConvertTimeToPosix(
+    Example_DETha98, 'YDH', Year = 'Year', Day = 'DoY', Hour = 'Hour'))
+  dss <- ds[4:(nrow(ds)-5),]
+  db <- get_day_boundaries(dss$DateTime)
+  expect_equal(db, as.POSIXct(c("1998-01-02 00:30:00","1998-12-31 00:00:00"),
+                              tz = attr(dss$DateTime,"tzone")))
+  #
+  dse <- filter_entire_days(dss, "DateTime")
+  expect_true(all(diff(dse$DateTime, units="mins") == 30))
+  expect_equal(dse$DateTime[1], db[1])
+  expect_equal(dse$DateTime[nrow(dse)], db[2])
+  # check that attributes are copied
+  expect_equal(sapply(dse, attributes), sapply(dss, attributes))
+})
+
+test_that("filter_years_eop",{
+  # construct multiyear dataset
+  ds99 <- ds00 <- Example_DETha98
+  ds99$Year <- 1999
+  ds00$Year <- 2000
+  ds2yr <- suppressMessages(
+    fConvertTimeToPosix(rbind(Example_DETha98, ds99, ds00)
+                        , 'YDH', Year = 'Year', Day = 'DoY', Hour = 'Hour'))
+  dss <- filter_years_eop(ds2yr, 1998:1999)
+  expect_equal(dss$DateTime[c(1,nrow(dss))],
+               as.POSIXct(c("1998-01-01 00:30:00","2000-01-01 00:00:00"),
+                          tz = attr(dss$DateTime,"tzone")))
+  # check that attributes are copied
+  expect_equal(sapply(dss, attributes), sapply(ds2yr, attributes))
+})
+
+
+
+

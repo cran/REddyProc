@@ -112,6 +112,8 @@ sEddyProc_initialize <- function(
   sDATA <<- cbind(sDateTime = Time.V.p, as.data.frame(Data[, ColNames, drop = FALSE]))
   ##details<< sTEMP is a temporal data frame with the processing results.
   sTEMP <<- data.frame(sDateTime = Time.V.p)
+  # initialized column season in sTEMP, if it was specified with data
+  if (!is.null(sDATA$season)) sTEMP$season <<- sDATA$season
   #Initialization of site data information from POSIX time stamp.
   YStart.n <- as.numeric(format(sDATA$sDateTime[1], '%Y'))
   YEnd.n <- as.numeric(format(sDATA$sDateTime[length(sDATA$sDateTime)], '%Y'))
@@ -374,7 +376,8 @@ sEddyProc$methods(update_ustarthreshold_columns =
 #' @export
 sEddyProc_sExportData <- function()
   ### Export class internal sDATA data frame
-  ##author<< AMM
+  ##author<< AMM, TW
+  ##seealso<< \code{\link{help_export}}
 {
 	lDATA <- sDATA
 	lDATA$sDateTime <- lDATA$sDateTime + (15L * 60L)
@@ -394,8 +397,9 @@ sEddyProc_sExportResults <- function(
 	  ## to numeric columns,
 		## such as the covariance matrices of the the day-time-partitioning LRC fits
 ) {
-    ##author<< AMM
-    'Export class internal sTEMP data frame with result columns'
+  ##author<< AMM
+  ##seealso<< \code{\link{help_export}}
+  'Export class internal sTEMP data frame with result columns'
 	iListColumns <- which(sapply(sTEMP, is.list) )
 	iOmit <- if (isListColumnsExported) c(1L) else c(1L, iListColumns)
     sTEMP[, -iOmit]
@@ -429,4 +433,40 @@ sEddyProc$methods(sPrintFrames = sEddyProc_sPrintFrames)
 
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+sEddyProc_sUpdateMethod <- function(x){
+  # https://stackoverflow.com/a/22845207/17096551
+  # EProc$sUpdateMethod('sExportData')
+  selfEnv <- as.environment(.self)
+  .class <- as.character(class(.self))
+  for (e in x){
+    v <- get(e,eval(parse(text=sprintf("%s@generator$def@refMethods",.class))))
+    assign(e,v,envir=selfEnv)
+  }
+}
+sEddyProc$methods(sUpdateMethod = sEddyProc_sUpdateMethod)
+
+# removed 2401 because of check note of unsave code unlockBinding in newMethod
+# see test_gapfilling.R
+# sEddyProc$methods(newMethod = function(...) {
+#   # https://stackoverflow.com/a/26130789/17096551
+#   env <- asNamespace("REddyProc")
+#   on.exit({
+#     lockBinding(classMetaName("sEddyProc"), env)
+#     lockBinding(".__global__", env)
+#     rlang::env_lock(env)
+#   })
+#   unlockBinding(classMetaName("sEddyProc"), env)
+#   unlockBinding(".__global__", env)
+#   rlang::env_unlock(env)
+#   #
+#   .call <- match.call()
+#   .call[[1]] <- quote(sEddyProc$methods)
+#   eval(.call, envir = parent.frame(2)) # function defined outside this function
+#   DTS = 24/(diff(as.numeric(head(.self$sDATA$sDateTime,2)))/3600)
+#   data = .self$sExportData()
+#   sEddyProc$new(
+#     .self$sID, data, colnames(data),
+#     LatDeg=.self$sLOCATION$LatDeg, LongDeg=.self$sLOCATION$LongDeg,
+#     TimeZoneHour=.self$sLOCATION$TimeZoneHour)
+# })
 

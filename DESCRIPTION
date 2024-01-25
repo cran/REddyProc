@@ -1,6 +1,6 @@
 Package: REddyProc
 Type: Package
-Version: 1.3.2
+Version: 1.3.3
 Title: Post Processing of (Half-)Hourly Eddy-Covariance Measurements
 Authors@R: c( person( "Department for Biogeochemical Integration at MPI-BGC, Jena, Germany", role=c("cph"), email="REddyProc-help@bgc-jena.mpg.de" )
               ,person( "Thomas", "Wutzler", role=c("aut","cre"), email="twutz@bgc-jena.mpg.de" )
@@ -35,14 +35,13 @@ URL: https://www.bgc-jena.mpg.de/bgi/index.php/Services/REddyProcWeb,
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
 VignetteBuilder: knitr
 LinkingTo: Rcpp
 Depends: R (>= 3.0.0), methods
 Imports: Rcpp, dplyr, purrr, rlang, readr, tibble, magrittr, solartime,
-        bigleaf (>= 0.7)
+        bigleaf (>= 0.7), mlegp
 Suggests: testthat, minpack.lm, segmented, knitr, rmarkdown, lognorm,
-        ggplot2, tidyr, markdown, mlegp
+        ggplot2, tidyr, markdown
 Collate: 'CheckVal.R' 'DataFunctions.R' 'aEddy.R' 'EddyGapfilling.R'
         'EddyPartitioning.R' 'EddyPlotting.R'
         'EddyUStarFilterChangePointDetection.R' 'EddyUStarFilterDP.R'
@@ -52,8 +51,9 @@ Collate: 'CheckVal.R' 'DataFunctions.R' 'aEddy.R' 'EddyGapfilling.R'
         'PartitioningLasslop10.R' 'PartitioningLasslop10Nighttime.R'
         'RcppExports.R' 'estimate_vpd_from_dew.R' 'imports.R'
         'logitnorm.R' 'variableNames.R' 'zzzDebugCode.R'
+RoxygenNote: 7.3.0
 NeedsCompilation: yes
-Packaged: 2022-03-09 09:35:00 UTC; twutz
+Packaged: 2024-01-25 14:41:24 UTC; twutz
 Author: Department for Biogeochemical Integration at MPI-BGC, Jena, Germany
     [cph],
   Thomas Wutzler [aut, cre],
@@ -65,4 +65,4 @@ Author: Department for Biogeochemical Integration at MPI-BGC, Jena, Germany
   Ladislav <U+0160>igut [ctb]
 Maintainer: Thomas Wutzler <twutz@bgc-jena.mpg.de>
 Repository: CRAN
-Date/Publication: 2022-03-09 12:00:06 UTC
+Date/Publication: 2024-01-25 15:30:02 UTC

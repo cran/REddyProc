@@ -3,6 +3,33 @@
 #+++ Dependencies: <none>
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+#' @export
+help_DateTimes <- function(
+  ### Overview of functions helping with Timestamps and Dates
+){
+  ##author<< TW
+  ##details<<
+  ## Functions helping with preparing and subsetting timestamps:
+  ## \itemize{
+  ## \item Convert different time formats to POSIX:
+  ##   \code{\link{fConvertTimeToPosix}}
+  ## \item Convert JulianDate format used in Berkeley release to POSIXct:
+  ##   \code{\link{BerkeleyJulianDateToPOSIXct}}
+  ## \item Return the first timestamp at (end_of_first_record_in_day) and the
+  ## last at midnight:
+  ##  \code{\link{get_day_boundaries}}
+  ## \item Omit records before the start of the first full day and the end of
+  ## the last full day:
+  ##  \code{\link{filter_entire_days}}
+  ## \item Subset data.frame to given years respecting the end-of-period
+  ##   convention: \code{\link{filter_years_eop}}
+  ## }
+  ##
+  ## Back to \link{REddyProc-package}.
+  "type ?help_DateTimes"
+}
+
+
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #+++ Time format conversion to POSIX
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -39,14 +66,14 @@ fConvertTimeToPosix <- function(
   if (length(iDepr)) warning(
     "Argument names ",varNamesDepr[iDepr]," have been deprecated."
     ," Please, use instead ", varNamesNew[iDepr])
-  ##author<< AMM
+  ##author<< AMM, TW
   #!Attention with MDS pwwave output file: Do not use YDH since julday (day of year)
   # is 366 but year is already the next year, use YMDHM instead!
   ##details<<
   ## The different time formats are converted to POSIX (GMT) and a 'TimeDate'
   ## column is prefixed to the data frame
   #
-  ##seealso<< \code{\link{BerkeleyJulianDateToPOSIXct}}
+  ##seealso<< \code{\link{help_DateTimes}}
   #Check if specified columns exist and are in data frame, with 'none' as dummy
   NoneCols.b <- c(Year, Month, Day, Hour, Min) %in% 'none'
   fCheckColNames(Data.F, c(Year, Month, Day, Hour, Min)[!NoneCols.b]
@@ -72,6 +99,7 @@ fConvertTimeToPosix <- function(
   ## The minute format is (0-59)
   ## }
   ## }
+  ##
   if (TFormat == 'YDH') {
     if (any(c(Year, Day, Hour) == 'none') ) stop(
       'With time format \'YDH\' year, day of year (DoY), and hour '
@@ -264,8 +292,8 @@ fCheckHHTimeSeries <- function(
   ## Check half-hourly time series data
   Time = Time.V.p              ##<< Time vector in POSIX format
   , DTS = DTS.n                ##<< Number of daily time steps (24 or 48)
-  , CallFunction = if (!missing(CallFunction.s)) CallFunction.s else ''    ##<<
-  ## Name of function called from
+  , CallFunction = if (!missing(CallFunction.s)) CallFunction.s else '' ##<< Name
+  ## of function called from
   , Time.V.p          ##<< deprecated
   , DTS.n             ##<< deprecated
   , CallFunction.s    ##<< deprecated
@@ -633,6 +661,27 @@ fFilterAttr <- function(
   ans
 }
 
+#' @export
+fKeepColumnAttributes <- function(
+  ### Copy column attributes after processing a data.frame
+  x,    ##<< data.frame to be processed
+  FUN,  ##<< \code{function(x::data.frame, ...) -> data.frame} to be applied
+  ...   ##<< additional arguments to FUN
+) {
+  ##details<<
+  ## The columns of the resulting data.frame that match a column name in x
+  ## will get the same attributes as in x.
+  if (!is.data.frame(x)) stop(paste0(
+    "fKeepColumnAttributes: expected first argument to be a data.frame, ",
+    "but was ", class(x)))
+  ans <- FUN(x, ...)
+  for (i in names(x) ) {
+    if (!is.null(attributes(ans[[i]]))) attributes(ans[[i]]) <- attributes(x[[i]])
+  }
+  ##value<< result of \code{function(x, ...)} with column attributes preserved
+  ans
+}
+
 #---------------------------------------------
 .runLength <- function(
   ### detect runs of equal values
@@ -699,3 +748,60 @@ filterLongRuns <- function(
   ##value<< data.frame \code{ans} with long runs in specified columns replaced by NA
   ans
 }
+
+#' @export
+get_day_boundaries <- function(
+    ### Return the first timestamp at (end_of_first_record_in_day) and the last at midnight
+    dt ##<< vector of equidistant POSIXt timestamps with several records a day, usually 48
+    ) {
+  ##seealso<< \code{\link{help_DateTimes}}, \code{\link{filter_entire_days}}
+  #daily time steps
+  DTS <- 24/as.numeric(difftime(dt[2],dt[1], units="hours"))
+  dts_start = head(dt, DTS)
+  dt_daystart = dts_start[which(
+    as.POSIXlt(dts_start)$hour + as.POSIXlt(dts_start)$min/60 == 24/DTS)]
+  dts_end = tail(dt, DTS)
+  dt_dayend =  dts_end[which(
+    as.POSIXlt(dts_end)$hour + as.POSIXlt(dts_end)$min/60 == 0)]
+  c(dt_daystart, dt_dayend)
+}
+
+#' @export
+filter_entire_days <- function(
+  ### Omit records before the start of the first full day and the end of the last full day
+  df                       ##<< data.frame with column col_time of equidistant
+  , col_time = "DateTime"  ##<< Name of the column with the equidistant timesteps
+) {
+  ##seealso<< \code{\link{help_DateTimes}}, \code{\link{get_day_boundaries}}
+  ## \code{\link{fKeepColumnAttributes}}
+  ##details<<
+  ## Column attributes such as 'units' are kept.
+  daybounds = get_day_boundaries(df[[col_time]])
+  fKeepColumnAttributes(df, function(df){
+    df[between(df[[col_time]], daybounds[1], daybounds[2]),]
+  })
+}
+
+#' @export
+filter_years_eop <- function(
+  ### Subset data.frame to given years respecting the end-of-period convention
+  df                       ##<< data.frame with column col_time of equidistant
+  , years                  ##<< integer vector of years of the form \code{c(1998, 1998)}
+  , col_time = "DateTime"  ##<< Name of the column with the equidistant timesteps
+) {
+  ##seealso<< \code{\link{help_DateTimes}}, \code{\link{filter_entire_days}}
+  ## \code{\link{fKeepColumnAttributes}}
+  ##details<<
+  ## The end-of-period (usually end-of-half-hour) convention
+  ## in the Fluxnet community results in midnight
+  ## and new-year being the last record of the previous day or the year respectively,
+  ## although POSIXt function will report the next day or year respectively.
+  ##
+  ## Column attributes such as 'units' are kept.
+  # shift time-stamp by 1 minute to the past to move midnight to previous day
+  fKeepColumnAttributes(df, function(df){
+    df %>% filter((as.POSIXlt(.data[[col_time]]-1*60)$year+1900) %in% years)
+  })
+}
+
+

@@ -18,7 +18,7 @@ NULL
 #' @importFrom stats aggregate anova approx coef cor cov lm median na.omit
 #'        nls nls.control optim predict quantile resid rnorm sd setNames
 #' @importFrom utils capture.output download.file read.csv recover write.table
-#'        warnErrList
+#'        warnErrList head tail
 #' @importFrom stats plogis qlogis
 NULL
 
@@ -28,7 +28,7 @@ NULL
 
 # only checked in code by require(), let R CMD check complain (only NOTE)
 #importFrom(boot, boot)
-#importFrom(segmented, segmented, seg.control)
+#importFrom(segmented, segmented, seg.control, pscore.test)
 #importFrom(minpack.lm, nlsLM, nls.lm.control)
 
 

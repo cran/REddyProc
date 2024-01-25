@@ -9,7 +9,8 @@ fLoadEuroFlux16 <- function(
 	, additionalColumnNames = character(0)	##<< character vector: column names to read in addition to c("Month", "Day", "Hour", "NEE_st", "qf_NEE_st", "ustar", "Ta", 'Rg')
 ) {
 	##author<< TW
-	##details<< The filenames should correspond to the pattern <sitename>_<YYYY>_. * .txt
+  ##seealso<< \code{\link{help_export}}
+  ##details<< The filenames should correspond to the pattern <sitename>_<YYYY>_. * .txt
 	## And hold columns c("Month", "Day", "Hour", "NEE_st", "qf_NEE_st", "ustar", "Ta", 'Rg').
 	## By default only those columns are read and reported only
 	## c("DateTime", "NEE", "Ustar", "Tair", "Rg", "qf_NEE_st" (Note the renaming).
@@ -20,7 +21,7 @@ fLoadEuroFlux16 <- function(
 	fileNames <- dir(dirName, filenamePattern)
 	fileName <- fileNames[1]
 	colNames <- union(c("Month", "Day", "Hour", "NEE_st", "qf_NEE_st", "ustar", "Ta", 'Rh', 'Rg'), additionalColumnNames)
-	# by settting colClasses at a given position to NULL the column is skipped
+	# by setting colClasses at a given position to NULL the column is skipped
 	header <- as.character(read.csv(file.path(dirName, fileName), header = FALSE, nrows = 1, stringsAsFactors = F))
 	iCols <- match(colNames, header)
 	if (length(iNACols <- which(is.na(iCols))) ) stop("unknown columns ", colNames[iNACols], " in file ", fileName)
@@ -62,10 +63,10 @@ fLoadEuroFlux16 <- function(
 #'   ds_fn15 <- Example_DETha98 %>%
 #'      fConvertTimeToPosix('YDH',Year = 'Year',Day = 'DoY', Hour = 'Hour') %>%
 #'      dplyr::mutate(
-#'         TIMESTAMP_END = POSIXctToBerkeleyJulianDate(.data$DateTime),
+#'         TIMESTAMP_END = POSIXctToBerkeleyJulianDate(DateTime),
 #'         season = factor(199801)
 #'      ) %>%
-#'      dplyr::rename(SW_IN = .data$Rg, TA = .data$Tair, USTAR = .data$Ustar) %>%
+#'      dplyr::rename(SW_IN = "Rg", TA = "Tair", USTAR = "Ustar") %>%
 #'      dplyr::select(dplyr::one_of(c(
 #'        "TIMESTAMP_END","NEE","SW_IN","TA","VPD","USTAR","season")))
 #'   head(ds_fn15)
@@ -261,14 +262,14 @@ extract_FN15 <- function(EProc = .self, is_export_nonfilled = TRUE, keep_other_c
 
 #' Read basic variables from Ameriflux standard (as of 2022) files
 #'
-#' Reads Variables from file into data.frame from file and passes 
+#' Reads Variables from file into data.frame from file and passes
 #' it to \code{\link{read_from_ameriflux22}}.
 #'
 #' @param file_path scalar string: the path to the csv file
 #' @param ... further arguments to \code{\link{read_csv}}
-#' 
-#' @return see \code{\link{read_from_ameriflux22}}
-#' 
+#'
+#' @seealso \code{\link{read_from_ameriflux22}} \code{\link{help_export}}
+#'
 #' @export
 fLoadAmeriflux22 <- function(file_path, ...) {
   col <- col_standard <- cols_only(
@@ -284,7 +285,7 @@ fLoadAmeriflux22 <- function(file_path, ...) {
     RH = col_double()
   )
   df <- read_csv(file_path, col_types = col, na =  c("-9999","","NA"), comment="#", ...)
-  read_from_ameriflux22(df)  
+  read_from_ameriflux22(df)
 }
 
 #' Extract basic variables from Ameriflux standard (as of 2022) data.frames
@@ -293,10 +294,10 @@ fLoadAmeriflux22 <- function(file_path, ...) {
 #' Non-storage corrected LE and H are read.
 #'
 #' @param df data.frame: with columns FC, SW_IN, RH, TA, USTAR, L and E
-#' 
-#' @return Data.Frame with columns 
+#'
+#' @return Data.Frame with columns
 #'   DateTime, NEE,	Rg,	Tair,	rH,	VPD, Ustar, LE, H
-#' 
+#'
 #' @export
 read_from_ameriflux22 <- function(df){
   ds_eproc <- df %>% mutate(
@@ -304,13 +305,49 @@ read_from_ameriflux22 <- function(df){
     RH = ifelse(between(.data$RH,100.0,105.0),100.0, .data$RH),
     VPD = fCalcVPDfromRHandTair(.data$RH, .data$TA)
   ) %>%
-    select(.data$DateTime, NEE = "FC",	Rg = "SW_IN",	Tair="TA",	rH="RH",	
+    select("DateTime", NEE = "FC",	Rg = "SW_IN",	Tair="TA",	rH="RH",
            .data$VPD, Ustar = "USTAR", .data$LE, .data$H )
-  varnames = names(ds_eproc)[-1] # all except DateTime  
-  units = REddyProc_defaultunits(varnames)  
-  ds_eproc <- ds_eproc %>%   
+  varnames = names(ds_eproc)[-1] # all except DateTime
+  units = REddyProc_defaultunits(varnames)
+  ds_eproc <- ds_eproc %>%
     set_varunit_attributes(varnames, units)
 }
 
+#' @export
+fWriteFrench23 <- function(
+    ##description<<
+  ## Write data frame to ASCII comma-separated text file
+  data                ##<< Data frame to be exported, with unit attributes attached to columns
+  , filename          ##<< (string)  name (including path) of the output file
+  , isSplitDatetime = FALSE ##<< set to TRUE to create columns Year, DoY and Hour
+  , digits = 5		  	##<< (integer) number of digits, i.e. precision, for numeric values
+) {
+  ##author<< TW
+  ##seealso<< \code{\link{fWriteDataframeToFile}}
+  ##details<<
+  ## Writes data.frame as comma-separated file after two header rows.
+  ##
+  ## The first header row contains the column names, and the second units.
+  ##
+  ## Spaces in column names are replaced by underscore and % is replaced by
+  ## the word percent.
+  if (isTRUE(isSplitDatetime)) data <- fSplitDateTime(data)
+  data <- fConvertNAsToGap(data)
+  # Write header
+  header <- vector(mode = 'character', length = 2)
+  header[1] <- paste(colnames(data), collapse = ',')
+  header[2] <- paste(as.character(lapply(
+    data, attr, which = 'units')), collapse = ',')
+  header <- gsub(' ', '_', header)
+  header[2] <- gsub('NULL', '-', header[2])
+  header[2] <- gsub('%', 'percent', header[2])
+  write(header, file = filename, append = F)
+  write_csv(
+    format(data, digits = digits, drop0trailing = T, trim = T),
+    filename, col_names=TRUE, append = TRUE)
+  message('Wrote output in French23 format to textfile: ', filename)
+}
+attr(fWriteFrench23, 'ex') <- function() {
+}
 
 
