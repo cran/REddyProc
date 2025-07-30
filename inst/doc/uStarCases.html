@@ -120,7 +120,7 @@ table, .body h2 { border-bottom: 1px solid #666; }
 .body .appendix, .appendix ~ h2 { border-bottom-style: dashed; }
 .footnote-ref a::before { content: "["; }
 .footnote-ref a::after { content: "]"; }
-.footnotes::before {
+section.footnotes::before {
   content: "";
   display: block;
   max-width: 20em;
@@ -139,8 +139,6 @@ table, .body h2 { border-bottom: 1px solid #666; }
 </style>
 </head>
 <body>
-<div class="include-before">
-</div>
 <div class="frontmatter">
 <div class="title"><h1>Different treatments of uStar threshold</h1></div>
 <div class="author"><h2></h2></div>
@@ -241,7 +239,7 @@ be investigated.</p>
 </code></pre>
 <pre><code>## Estimated UStar distribution of:
 ##      uStar        5%  50%       95%
-## 1 0.41625 0.3735357 0.45 0.6294264 
+## 1 0.41625 0.3795192 0.45 0.6368611 
 ## by using  100 bootstrap samples and controls:
 ##                        taClasses                    UstarClasses 
 ##                               7                              20 
@@ -256,11 +254,11 @@ be investigated.</p>
 EProc$sGetUstarScenarios()
 </code></pre>
 <pre><code>##    season   uStar       U05  U50       U95
-## 1 1998001 0.41625 0.3735357 0.45 0.6294264
-## 2 1998003 0.41625 0.3735357 0.45 0.6294264
-## 3 1998006 0.41625 0.3735357 0.45 0.6294264
-## 4 1998009 0.41625 0.3735357 0.45 0.6294264
-## 5 1998012 0.41625 0.3735357 0.45 0.6294264
+## 1 1998001 0.41625 0.3795192 0.45 0.6368611
+## 2 1998003 0.41625 0.3795192 0.45 0.6368611
+## 3 1998006 0.41625 0.3795192 0.45 0.6368611
+## 4 1998009 0.41625 0.3795192 0.45 0.6368611
+## 5 1998012 0.41625 0.3795192 0.45 0.6368611
 </code></pre>
 <p>By default the annually aggregated threshold estimates are used for each season
 within one year as in the original method publication.
@@ -269,13 +267,13 @@ use method <code>sEddyProc_sGetEstimatedUstarThresholdDistribution</code>:</p>
 <pre><code class="language-r">(uStarThAgg &lt;- EProc$sGetEstimatedUstarThresholdDistribution())
 </code></pre>
 <pre><code>##   aggregationMode seasonYear  season     uStar        5%       50%       95%
-## 1          single         NA    &lt;NA&gt; 0.4162500 0.3735357 0.4500000 0.6294264
-## 2            year       1998    &lt;NA&gt; 0.4162500 0.3735357 0.4500000 0.6294264
-## 3          season       1998 1998001 0.4162500 0.3735357 0.4500000 0.6294264
-## 4          season       1998 1998003 0.4162500 0.3221496 0.4059256 0.5481313
-## 5          season       1998 1998006 0.3520000 0.2881929 0.3900000 0.4652625
-## 6          season       1998 1998009 0.3369231 0.2362100 0.3754221 0.5361841
-## 7          season       1998 1998012 0.1740000 0.2096167 0.4239423 0.5891127
+## 1          single         NA    &lt;NA&gt; 0.4162500 0.3795192 0.4500000 0.6368611
+## 2            year       1998    &lt;NA&gt; 0.4162500 0.3795192 0.4500000 0.6368611
+## 3          season       1998 1998001 0.4162500 0.3795192 0.4500000 0.6368611
+## 4          season       1998 1998003 0.4162500 0.3328437 0.4127222 0.6201562
+## 5          season       1998 1998006 0.3520000 0.3246607 0.3867778 0.4603542
+## 6          season       1998 1998009 0.3369231 0.2386329 0.3844290 0.5301505
+## 7          season       1998 1998012 0.1740000 0.1924667 0.4331866 0.6368611
 </code></pre>
 <p>In conjunction with method <code>usGetSeasonalSeasonUStarMap</code> and
 <code>sEddyProc_sSetUstarScenarios</code> this can be used
@@ -289,11 +287,11 @@ EProc$useSeaonsalUStarThresholds()
 EProc$sGetUstarScenarios()
 </code></pre>
 <pre><code>##    season     uStar       U05       U50       U95
-## 3 1998001 0.4162500 0.3735357 0.4500000 0.6294264
-## 4 1998003 0.4162500 0.3221496 0.4059256 0.5481313
-## 5 1998006 0.3520000 0.2881929 0.3900000 0.4652625
-## 6 1998009 0.3369231 0.2362100 0.3754221 0.5361841
-## 7 1998012 0.1740000 0.2096167 0.4239423 0.5891127
+## 3 1998001 0.4162500 0.3795192 0.4500000 0.6368611
+## 4 1998003 0.4162500 0.3328437 0.4127222 0.6201562
+## 5 1998006 0.3520000 0.3246607 0.3867778 0.4603542
+## 6 1998009 0.3369231 0.2386329 0.3844290 0.5301505
+## 7 1998012 0.1740000 0.1924667 0.4331866 0.6368611
 </code></pre>
 <p>Several function whose name ends with ‘UstarScens’
 perform the subsequent processing steps for all uStar scenarios.
@@ -325,8 +323,6 @@ median u* threshold scenario with suffix <code>U50</code>, instead of the defaul
 <h2 id="see-also">See also</h2>
 <p>A more advanced case of user-specified seasons for
 uStar threshold estimate is given in <a href="DEGebExample.html"><code>vignette('DEGebExample')</code></a>.</p>
-</div>
-<div class="include-after">
 </div>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
